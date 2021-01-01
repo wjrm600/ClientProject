@@ -22,33 +22,22 @@ Engine::CNaviMesh::~CNaviMesh(void)
 
 }
 
-HRESULT Engine::CNaviMesh::Ready_NaviMeshes(void)
+HRESULT CNaviMesh::SetAddCell(_vec3 * vertex1, _vec3 * vertex2, _vec3 * vertex3)
 {
-	m_vecCell.reserve(4);
-
 	CCell*		pCell = nullptr;
 
-	// 0번 
-	pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &_vec3(0.f, 0.f, 2.f), &_vec3(2.f, 0.f, 0.f), &_vec3(0.f, 0.f, 0.f));
+	pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), vertex1, vertex2, vertex3);
 	NULL_CHECK_RETURN(pCell, E_FAIL);
 	m_vecCell.push_back(pCell);
 
-	// 1번 
-	pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &_vec3(0.f, 0.f, 2.f), &_vec3(2.f, 0.f, 2.f), &_vec3(2.f, 0.f, 0.f));
-	NULL_CHECK_RETURN(pCell, E_FAIL);
-	m_vecCell.push_back(pCell);
-
-	// 2번 
-	pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &_vec3(0.f, 0.f, 4.f), &_vec3(2.f, 0.f, 2.f), &_vec3(0.f, 0.f, 2.f));
-	NULL_CHECK_RETURN(pCell, E_FAIL);
-	m_vecCell.push_back(pCell);
-
-	// 3번 
-	pCell = CCell::Create(m_pGraphicDev, m_vecCell.size(), &_vec3(2.f, 0.f, 2.f), &_vec3(4.f, 0.f, 0.f), &_vec3(2.f, 0.f, 0.f));
-	NULL_CHECK_RETURN(pCell, E_FAIL);
-	m_vecCell.push_back(pCell);
-
+	//AddSaveNaviMesh(vertex1, vertex2, vertex3);
 	FAILED_CHECK_RETURN(Link_Cell(), E_FAIL);
+}
+
+HRESULT Engine::CNaviMesh::Ready_NaviMeshes(void)
+{
+
+	m_vecCell.reserve(100);
 
 	return S_OK;
 }

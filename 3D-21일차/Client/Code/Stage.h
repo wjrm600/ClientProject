@@ -35,7 +35,12 @@ private:
 	HRESULT		Ready_UI_Layer(const _tchar* pLayerTag);
 
 	HRESULT		Ready_LightInfo(void);
+public:
+	HRESULT		Ready_LoadObjectFile(void);
+	HRESULT		Ready_LoadNaviMeshFile(void);
 
+	Engine::CLayer*			pGameLogicLayer;
+	Engine::CLayer*			pEnvironmentLayer;
 public:
 	static CStage*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

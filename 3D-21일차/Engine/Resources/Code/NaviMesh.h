@@ -16,13 +16,13 @@ private:
 
 public:
 	void		Set_NaviIndex(const _ulong& dwIndex) { m_dwIndex = dwIndex; }
-
+	HRESULT		SetAddCell(_vec3* vertex1, _vec3* vertex2, _vec3* vertex3);
 public:
 	HRESULT		Ready_NaviMeshes(void);
 	void		Render_NaviMeshes(void);
 
 	_vec3			Move_OnNaviMesh(const _vec3* pTargetPos, const _vec3* pTargetDir);
-
+	vector<CCell*>* GetVecCell() { return &m_vecCell; }
 private:
 	HRESULT		Link_Cell(void);
 

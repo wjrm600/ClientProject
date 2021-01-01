@@ -121,7 +121,7 @@ void Engine::CTransform::Set_Scale(const float& fX, const float& fY, const float
 
 void CTransform::Get_Info(INFO eType, _vec3 * pInfo)
 {
-	memcpy(pInfo, &m_matWorld.m[eType][0], sizeof(_vec3));
+	memcpy(pInfo, &m_vInfo[eType], sizeof(_vec3));
 }
 
 void CTransform::Move_Pos(const _vec3 * const pDir)

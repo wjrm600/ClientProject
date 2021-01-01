@@ -27,7 +27,7 @@ public:
 	virtual HRESULT Ready_Object(void) override;
 	virtual _int Update_Object(const _float& fTimeDelta) override;
 	virtual void Render_Object(void) override;
-
+	virtual void Load_Object(_vec3 Position) override;
 private:
 	HRESULT		Add_Component(void);
 	void		SetUp_OnTerrain(void);

@@ -78,6 +78,27 @@ namespace Engine
 
 
 	}D3DXMESHCONTAINER_DERIVED;
+
+	typedef struct PICKING_RAY
+	{
+		_vec3 Raypos;
+		_vec3 Raydir;
+	}PICKING_RAY;
+
+	typedef struct NAVIMESHSAVESTRUCT
+	{
+		_vec3 CellPointOne;
+		_vec3 CellPointTwo;
+		_vec3 CellPointThree;
+		_uint SaveNaviMeshIndex;
+	}NAVIMESHSAVESTRUCT;
+
+	typedef struct MESHSAVESTRUCT
+	{
+		_vec3 MeshPosition;
+		_tchar MeshTag[50];
+		MESHTYPE MeshType;
+	}MESHSAVESTRUCT;
 }
 
 #endif // Engine_Struct_h__

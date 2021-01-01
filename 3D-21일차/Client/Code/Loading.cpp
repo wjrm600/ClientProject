@@ -168,7 +168,7 @@ _uint CLoading::Loading_ForStage(void)
 											L"Mesh_Tree",
 											Engine::TYPE_STATIC,
 											L"../Bin/Resource/Mesh/StaticMesh/Tree/",
-											L"Tree01.X"),
+											L"Tree.X"),
 											E_FAIL);
 	
 	

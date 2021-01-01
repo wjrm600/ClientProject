@@ -67,7 +67,7 @@ HRESULT Client::CSword::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
-	m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(90.f));
+	m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(90.f));
 
 	return S_OK;
 }
@@ -78,7 +78,7 @@ Client::_int Client::CSword::Update_Object(const _float& fTimeDelta)
 		Engine::CDynamicMesh*	pPlayerMeshCom = dynamic_cast<Engine::CDynamicMesh*>(Engine::Get_Component(L"GameLogic", L"Player", L"Com_Mesh", Engine::ID_STATIC));
 		NULL_CHECK_RETURN(pPlayerMeshCom, 0);
 
-		const Engine::D3DXFRAME_DERIVED* pFrame = pPlayerMeshCom->Get_FrameByName("R_Hand");
+		const Engine::D3DXFRAME_DERIVED* pFrame = pPlayerMeshCom->Get_FrameByName("mouse_grip_R");
 
 		m_pParentBoneMatrix = &pFrame->CombinedTransformationMatrix;
 
@@ -108,7 +108,7 @@ void Client::CSword::Render_Object(void)
 		m_pTransformCom->Get_WorldMatrix(&matWorld);
 		//m_pTransformCom->Get_NRotWorldMatrix(&matWorld);
 
-	m_pColliderCom->Render_Collider(Engine::COLLTYPE(m_bColl), &matWorld);
+	//m_pColliderCom->Render_Collider(Engine::COLLTYPE(m_bColl), &matWorld);
 
 
 }

@@ -76,6 +76,7 @@ void CStone::Free(void)
 HRESULT Client::CStone::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
+	
 
 	m_pTransformCom->Set_Pos(&_vec3(5.f, 0.f, 5.f));
 	m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(45.f));
@@ -117,6 +118,12 @@ void Client::CStone::Render_Object(void)
 	pEffect->End();
 
 	Engine::Safe_Release(pEffect);
+}
+
+void CStone::Load_Object(_vec3 Position)
+{
+	m_vLoadPosition = Position;
+	m_pTransformCom->Set_Pos(&m_vLoadPosition);
 }
 
 void Client::CStone::SetUp_OnTerrain(void)

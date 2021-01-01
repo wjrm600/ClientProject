@@ -42,7 +42,8 @@ Engine::_int CLogo::Update_Scene(const _float& fTimeDelta)
 			pScene = CStage::Create(m_pGraphicDev);
 
 			FAILED_CHECK_RETURN(Engine::SetUp_Scene(pScene), E_FAIL);
-
+			FAILED_CHECK_RETURN(dynamic_cast<CStage*>(pScene)->Ready_LoadObjectFile(), E_FAIL);
+			FAILED_CHECK_RETURN(dynamic_cast<CStage*>(pScene)->Ready_LoadNaviMeshFile(), E_FAIL);
 			return iExit;
 		}	
 	}

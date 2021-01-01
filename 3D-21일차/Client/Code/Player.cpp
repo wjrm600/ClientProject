@@ -95,7 +95,7 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 
 		m_pTransformCom->Set_Pos(&m_pNaviMeshCom->Move_OnNaviMesh(&vPos, &(vDir * fTimeDelta * m_fSpeed)));
 		
-		m_pMeshCom->Set_AnimationSet(54);
+		m_pMeshCom->Set_AnimationSet(4);
 
 	}
 
@@ -106,10 +106,10 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 	}
 
 	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(90.f * fTimeDelta));
+		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-90.f * fTimeDelta));
 
 	if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(-90.f * fTimeDelta));
+		m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(90.f * fTimeDelta));
 
 	if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
 	{
@@ -119,13 +119,19 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 
 	if (Engine::Get_DIMouseState(Engine::DIM_RB) & 0x80)
 	{
-		m_pMeshCom->Set_AnimationSet(30);
+		m_pMeshCom->Set_AnimationSet(0);
 	}
 
 	if(true == m_pMeshCom->Is_AnimationSetEnd())
-		m_pMeshCom->Set_AnimationSet(57);
+		m_pMeshCom->Set_AnimationSet(6);
 
 
+}
+
+void CPlayer::Load_Object(_vec3 Position)
+{
+	m_vLoadPosition = Position;
+	m_pTransformCom->Set_Pos(&m_vLoadPosition);
 }
 
 CPlayer* CPlayer::Create(LPDIRECT3DDEVICE9 pGraphicDev)
@@ -149,7 +155,7 @@ HRESULT Client::CPlayer::Ready_Object(void)
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
 	m_pTransformCom->Set_Scale(0.01f, 0.01f, 0.01f);
-	m_pMeshCom->Set_AnimationSet(57);
+	m_pMeshCom->Set_AnimationSet(6);
 
 	m_pNaviMeshCom->Set_NaviIndex(0);
 
@@ -160,9 +166,8 @@ Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 
 	SetUp_OnTerrain();
 	Key_Input(fTimeDelta);
-
 	Engine::CGameObject::Update_Object(fTimeDelta);
-
+	
 	m_pMeshCom->Play_Animation(fTimeDelta);
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
