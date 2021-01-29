@@ -37,8 +37,11 @@ public:
 	_bool			Collision_AABB(const _vec3* pDestMin, const _vec3* pDestMax, const _matrix* pDestWorld, 
 								   const _vec3* pSourMin, const _vec3* pSourMax, const _matrix* pSourWorld);
 
+	PICKING_RAY		GetPicking_Ray(HWND hWnd);
 	_bool			Collision_OBB(const _vec3* pDestMin, const _vec3* pDestMax, const _matrix* pDestWorld,
 		const _vec3* pSourMin, const _vec3* pSourMax, const _matrix* pSourWorld);
+	_bool		Collision_SphereOBB(const _vec3* pDestMin, const _vec3* pDestMax, const _matrix* pDestWorld,
+		const _vec3* pSourCenter, const _float* pSourRadius);
 
 private:
 	void	Set_Point(OBB* pObb, const _vec3* pMin, const _vec3* pMax);

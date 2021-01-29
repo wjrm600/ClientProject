@@ -48,15 +48,62 @@ void CNaviMesh::Render_NaviMeshes(void)
 		iter->Render_Cell();
 }
 
-_vec3 CNaviMesh::Move_OnNaviMesh(const _vec3 * pTargetPos, const _vec3 * pTargetDir)
+_vec3 CNaviMesh::Move_OnNaviMesh(const _vec3 * pTargetPos, const _vec3 * pTargetDir, const _float& fTimeDelta)
 {
 	_vec3		vEndPos = *pTargetPos + *pTargetDir;
-
+	_vec3		GoalVec;
 	if (CCell::MOVE == m_vecCell[m_dwIndex]->CompareCell(&vEndPos, &m_dwIndex))
 		return vEndPos;
 
 	else if (CCell::STOP == m_vecCell[m_dwIndex]->CompareCell(&vEndPos, &m_dwIndex))
-		return *pTargetPos;
+	{
+		_vec3 PointA_Dis = *m_vecCell[m_dwIndex]->Get_Point(Engine::CCell::POINT_A) - *pTargetPos;
+		_vec3 PointB_Dis = *m_vecCell[m_dwIndex]->Get_Point(Engine::CCell::POINT_B) - *pTargetPos;
+		_vec3 PointC_Dis = *m_vecCell[m_dwIndex]->Get_Point(Engine::CCell::POINT_C) - *pTargetPos;
+		_float ADistnaceLength = D3DXVec3Length(&PointA_Dis);
+		_float BDistnaceLength = D3DXVec3Length(&PointB_Dis);
+		_float CDistnaceLength = D3DXVec3Length(&PointC_Dis);
+
+		PointDistanceOrderSort(ADistnaceLength, BDistnaceLength, CDistnaceLength);
+
+		_vec3 ComparedVec = *m_vecCell[m_dwIndex]->Get_Point(DistanceOrder[0]) - *m_vecCell[m_dwIndex]->Get_Point(DistanceOrder[1]);
+		_vec3 DirectionVec = *pTargetDir;
+
+		D3DXVec3Normalize(&ComparedVec, &ComparedVec);
+		D3DXVec3Normalize(&DirectionVec, &DirectionVec);
+
+		_float ResultNor = D3DXVec3Dot(&ComparedVec, &DirectionVec);
+		if (ResultNor > 0)
+		{
+			GoalVec = *m_vecCell[m_dwIndex]->Get_Point(DistanceOrder[0]) - *pTargetPos;
+			D3DXVec3Normalize(&GoalVec, &GoalVec);
+			GoalVec *= fTimeDelta;
+			GoalVec += *pTargetPos;
+		}
+		else if (ResultNor < 0)
+		{
+			GoalVec = *m_vecCell[m_dwIndex]->Get_Point(DistanceOrder[1]) - *pTargetPos;
+			D3DXVec3Normalize(&GoalVec, &GoalVec);
+			GoalVec *= fTimeDelta;
+			GoalVec += *pTargetPos;
+		}
+		else
+		{
+			GoalVec = *pTargetPos;
+		}
+		return GoalVec;
+	}
+}
+
+_vec3 CNaviMesh::Search_OnNaviMesh(const _vec3 * pTargetPos)
+{
+	auto CellIter = m_vecCell.begin();
+	for (; CellIter != m_vecCell.end(); CellIter++)
+	{
+		(*CellIter)->CompareCell(pTargetPos, &m_dwIndex);
+	}
+
+	return *pTargetPos;
 }
 
 HRESULT Engine::CNaviMesh::Link_Cell(void)
@@ -99,6 +146,57 @@ HRESULT Engine::CNaviMesh::Link_Cell(void)
 	}
 	
 	return S_OK;
+}
+
+void CNaviMesh::PointDistanceOrderSort(_float DistanceA, _float DistanceB, _float DistanceC)
+{
+	if (DistanceA < DistanceB)
+	{
+		if (DistanceA < DistanceC)
+		{
+			DistanceOrder[0] = CCell::POINT_A;
+			if (DistanceB < DistanceC)
+			{
+				DistanceOrder[1] = CCell::POINT_B;
+				DistanceOrder[2] = CCell::POINT_C;
+			}
+			else
+			{
+				DistanceOrder[1] = CCell::POINT_C;
+				DistanceOrder[2] = CCell::POINT_B;
+			}
+		}
+		else
+		{
+			DistanceOrder[0] = CCell::POINT_C;
+			DistanceOrder[1] = CCell::POINT_B;
+			DistanceOrder[2] = CCell::POINT_A;
+		}
+	}
+	else
+	{
+		if (DistanceB < DistanceC)
+		{
+			DistanceOrder[0] = CCell::POINT_B;
+			if (DistanceA < DistanceC)
+			{
+				DistanceOrder[1] = CCell::POINT_A;
+				DistanceOrder[2] = CCell::POINT_C;
+			}
+			else
+			{
+				DistanceOrder[1] = CCell::POINT_C;
+				DistanceOrder[2] = CCell::POINT_A;
+			}
+		}
+		else
+		{
+			DistanceOrder[0] = CCell::POINT_C;
+			DistanceOrder[1] = CCell::POINT_B;
+			DistanceOrder[2] = CCell::POINT_A;
+
+		}
+	}
 }
 
 Engine::CNaviMesh* Engine::CNaviMesh::Create(LPDIRECT3DDEVICE9 pGraphicDev)

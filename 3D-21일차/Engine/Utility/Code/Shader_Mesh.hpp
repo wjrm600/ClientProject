@@ -72,9 +72,9 @@ PS_OUT		PS_MAIN(PS_IN In)
 	// (-1 ~ 1)값은 월드 상태의 법선 벡터를 정규화하였기 때문에 xyz값이 나올 수 있는 범위에 해당
 	// (0 ~ 1) 텍스쳐 uv좌표로 변환
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-
+	//Out.vNormal = vector(In.vNormal.xyz, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w * 0.001f, 0.f, 0.f);
-	
+	//Out.vDepth = vector(1.f, 1.f, 1.f, 1.f);
 	return Out;
 }
 

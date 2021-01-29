@@ -172,8 +172,34 @@ Engine::CCell::MOVING Engine::CCell::CompareCell(const _vec3 * pEndPos, _ulong *
 				return CCell::MOVE;
 			}
 		}
+		else
+		{
+
+		}
 	}
 	
 	return CCell::MOVE;
+}
+
+_bool CCell::Compare_SearchCell(const _vec3 * pTargetPoint, _ulong* pCellIndex)
+{
+	_uint RepeatCount = 0;
+	for (_ulong i = 0; i < LINE_END; ++i)
+	{
+		if (CLine::COMPARE_RIGHT == m_pLine[i]->Compare(&_vec2(pTargetPoint->x, pTargetPoint->z)))
+		{
+			RepeatCount++;
+			if (RepeatCount == 3)
+			{
+				*pCellIndex = m_dwIndex;
+				return true;
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return false;
 }
 

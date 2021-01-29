@@ -141,6 +141,38 @@ _uint CLoading::Loading_ForStage(void)
 
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 												Engine::RESOURCE_STAGE,
+												L"Mesh_Intro010",
+												Engine::TYPE_STATIC,
+												L"../Bin/Resource/Mesh/StaticMesh/Intro010/",
+												L"Intro010.X"),
+												E_FAIL);
+
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_RuinBox",
+												Engine::TYPE_STATIC,
+												L"../Bin/Resource/Mesh/StaticMesh/RuinBox/",
+												L"RuinBox.X"),
+												E_FAIL);
+
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_Intro010_Brick",
+												Engine::TYPE_STATIC,
+												L"../Bin/Resource/Mesh/StaticMesh/Intro010/",
+												L"Intro010_Brick.X"),
+												E_FAIL);
+
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_Intro010_Back",
+												Engine::TYPE_STATIC,
+												L"../Bin/Resource/Mesh/StaticMesh/Intro010/",
+												L"Intro010_Back.X"),
+												E_FAIL);
+
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
 												L"Mesh_Navi",
 												Engine::TYPE_NAVI,
 												NULL,

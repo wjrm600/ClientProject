@@ -1,6 +1,8 @@
 #ifndef Engine_Struct_h__
 #define Engine_Struct_h__
 
+using namespace std;
+
 namespace Engine
 {
 	typedef	struct tagVertexColor
@@ -98,6 +100,7 @@ namespace Engine
 		_vec3 MeshPosition;
 		_tchar MeshTag[50];
 		MESHTYPE MeshType;
+		vector<vector<char>> ColliderTarget;
 	}MESHSAVESTRUCT;
 }
 

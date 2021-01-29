@@ -16,14 +16,15 @@ Engine::CDynamicMesh::CDynamicMesh(const CDynamicMesh& rhs)
 	, m_pRootFrame(rhs.m_pRootFrame)
 	, m_pLoader(rhs.m_pLoader)
 	, m_MeshContainerList(rhs.m_MeshContainerList)
-
+	, m_dwNumVtx(rhs.m_dwNumVtx)
+	, m_pVtxPos(rhs.m_pVtxPos)
+	, m_dwStride(rhs.m_dwStride)
 {
 	m_pAniCtrl = CAniCtrl::Create(*rhs.m_pAniCtrl);
 }
 
 Engine::CDynamicMesh::~CDynamicMesh(void)
 {
-
 }
 
 HRESULT Engine::CDynamicMesh::Ready_Meshes(const _tchar* pFilePath, const _tchar* pFileName)
@@ -57,6 +58,41 @@ HRESULT Engine::CDynamicMesh::Ready_Meshes(const _tchar* pFilePath, const _tchar
 	Update_FrameMatrices((D3DXFRAME_DERIVED*)m_pRootFrame, D3DXMatrixRotationY(&matTemp, D3DXToRadian(180.f)));
 
 	SetUp_FrameMatrixPointer((D3DXFRAME_DERIVED*)m_pRootFrame);
+
+	_ulong	dwFVF = Get_Mesh()->GetFVF();
+
+	void*		pVertex = nullptr;
+	m_dwNumVtx = Get_Mesh()->GetNumVertices();
+	m_pVtxPos = new _vec3[m_dwNumVtx];
+
+	Get_Mesh()->LockVertexBuffer(0, &pVertex);
+
+	// 정점 정보 중 position의 위치 찾기
+	D3DVERTEXELEMENT9			Decl[MAX_FVF_DECL_SIZE];
+	ZeroMemory(Decl, sizeof(D3DVERTEXELEMENT9) * MAX_FVF_DECL_SIZE);
+
+	Get_Mesh()->GetDeclaration(Decl);
+
+	_ubyte byOffset = 0;
+
+	for (_ulong i = 0; i < MAX_FVF_DECL_SIZE; ++i)
+	{
+		if (Decl[i].Usage == D3DDECLUSAGE_POSITION)
+		{
+			byOffset = (_ubyte)Decl[i].Offset;
+			break;
+		}
+	}
+	// FVF 정보를 토대로 정점의 크기를 반환하는 함수
+	m_dwStride = D3DXGetFVFVertexSize(dwFVF);
+
+	for (_ulong i = 0; i < m_dwNumVtx; ++i)
+	{
+		m_pVtxPos[i] = *((_vec3*)(((_ubyte*)pVertex) + (i * m_dwStride + byOffset)));
+	}
+
+	Get_Mesh()->UnlockVertexBuffer();
+
 
 	return S_OK;
 }
@@ -134,7 +170,7 @@ void CDynamicMesh::Render_Meshes(LPD3DXEFFECT & pEffect)
 	}
 }
 
-const Engine::D3DXFRAME_DERIVED* Engine::CDynamicMesh::Get_FrameByName(const char* pFrameName)
+Engine::D3DXFRAME_DERIVED* Engine::CDynamicMesh::Get_FrameByName(const char* pFrameName)
 {
 	return (D3DXFRAME_DERIVED*)D3DXFrameFind(m_pRootFrame, pFrameName);
 }
@@ -155,6 +191,12 @@ void CDynamicMesh::Play_Animation(const _float & fTimeDelta)
 
 	_matrix		matTemp;
 	Update_FrameMatrices((D3DXFRAME_DERIVED*)m_pRootFrame, D3DXMatrixRotationY(&matTemp, D3DXToRadian(180.f)));
+}
+
+const LPD3DXMESH CDynamicMesh::Get_Mesh(void)
+{
+	list<D3DXMESHCONTAINER_DERIVED*>::iterator iter = m_MeshContainerList.begin();
+	return (*iter)->pOriMesh;
 }
 
 void Engine::CDynamicMesh::Update_FrameMatrices(D3DXFRAME_DERIVED* pFrame, const _matrix* pParentMatrix)
@@ -197,6 +239,7 @@ void Engine::CDynamicMesh::Free(void)
 	{
 		m_pLoader->DestroyFrame(m_pRootFrame);
 		Safe_Release(m_pLoader);
+		Safe_Delete_Array(m_pVtxPos);
 	}
 	m_MeshContainerList.clear();
 }

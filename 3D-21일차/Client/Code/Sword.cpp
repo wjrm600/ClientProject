@@ -67,7 +67,9 @@ HRESULT Client::CSword::Ready_Object(void)
 {
 	FAILED_CHECK_RETURN(Add_Component(), E_FAIL);
 
+	m_pTransformCom->Rotation(Engine::ROT_X, D3DXToRadian(90.f));
 	m_pTransformCom->Rotation(Engine::ROT_Z, D3DXToRadian(90.f));
+	m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(90.f));
 
 	return S_OK;
 }

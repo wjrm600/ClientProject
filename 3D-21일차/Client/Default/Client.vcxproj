@@ -172,13 +172,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\BackGround.h" />
+    <ClInclude Include="..\Code\ColliderMesh.h" />
     <ClInclude Include="..\Code\DynamicCamera.h" />
     <ClInclude Include="..\Code\Effect.h" />
+    <ClInclude Include="..\Code\Intro010.h" />
     <ClInclude Include="..\Code\Loading.h" />
     <ClInclude Include="..\Code\Logo.h" />
     <ClInclude Include="..\Code\MainApp.h" />
     <ClInclude Include="..\Code\Monster.h" />
     <ClInclude Include="..\Code\Player.h" />
+    <ClInclude Include="..\Code\RuinBox.h" />
     <ClInclude Include="..\Code\SkyBox.h" />
     <ClInclude Include="..\Code\Stage.h" />
     <ClInclude Include="..\Code\Stone.h" />
@@ -199,13 +202,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Code\BackGround.cpp" />
+    <ClCompile Include="..\Code\ColliderMesh.cpp" />
     <ClCompile Include="..\Code\DynamicCamera.cpp" />
     <ClCompile Include="..\Code\Effect.cpp" />
+    <ClCompile Include="..\Code\Intro010.cpp" />
     <ClCompile Include="..\Code\Loading.cpp" />
     <ClCompile Include="..\Code\Logo.cpp" />
     <ClCompile Include="..\Code\MainApp.cpp" />
     <ClCompile Include="..\Code\Monster.cpp" />
     <ClCompile Include="..\Code\Player.cpp" />
+    <ClCompile Include="..\Code\RuinBox.cpp" />
     <ClCompile Include="..\Code\SkyBox.cpp" />
     <ClCompile Include="..\Code\Stage.cpp" />
     <ClCompile Include="..\Code\Stone.cpp" />

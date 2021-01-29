@@ -11,6 +11,9 @@
 #include "Monster.h"
 
 #include "Stone.h"
+#include "Intro010.h"
+#include "RuinBox.h"
+#include "ColliderMesh.h"
 #include "Sword.h"
 #include "Tree.h"
 #include "Effect.h"
@@ -35,6 +38,8 @@ private:
 	HRESULT		Ready_UI_Layer(const _tchar* pLayerTag);
 
 	HRESULT		Ready_LightInfo(void);
+
+	vector<CColliderMesh*> m_vecColliderMesh;
 public:
 	HRESULT		Ready_LoadObjectFile(void);
 	HRESULT		Ready_LoadNaviMeshFile(void);

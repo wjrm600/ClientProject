@@ -18,13 +18,17 @@ public:
 	HRESULT			Ready_Meshes(const _tchar* pFilePath, const _tchar* pFileName);
 	void			Render_Meshes(void);
 	void			Render_Meshes(LPD3DXEFFECT& pEffect);
-	const  D3DXFRAME_DERIVED*		Get_FrameByName(const char* pFrameName);
+	D3DXFRAME_DERIVED*		Get_FrameByName(const char* pFrameName);
 	_bool							Is_AnimationSetEnd(void);
 public:
 	void			Set_AnimationSet(const _uint& iIndex);
 	void			Play_Animation(const _float& fTimeDelta);
-
-private:
+	const LPD3DXMESH	Get_Mesh(void);
+	D3DXFRAME*		Get_RootFrame() { return m_pRootFrame; }
+	const _ulong&		Get_NumVtx(void) { return m_dwNumVtx; }
+	const _ulong&		Get_Stride(void) { return m_dwStride; }
+	const _vec3*		Get_VtxPos(void) { return m_pVtxPos; }
+public:
 
 	// 모든 뼈들을 순회하면서 뼈들이 갖고 있는 TransformationMatrix와 pParentMatrix를 결합하여 CombinedTransformationMatrix를 만들어주는 함수
 	void			Update_FrameMatrices(D3DXFRAME_DERIVED* pFrame, const _matrix* pParentMatrix);
@@ -37,7 +41,9 @@ private:
 	CHierarchyLoader*		m_pLoader;
 	CAniCtrl*				m_pAniCtrl;
 	list<D3DXMESHCONTAINER_DERIVED*>			m_MeshContainerList;
-
+	_ulong				m_dwStride;
+	_ulong				m_dwNumVtx;
+	_vec3*				m_pVtxPos;
 public:
 	static	CDynamicMesh*		Create(LPDIRECT3DDEVICE9 pGraphicDev, const _tchar* pFilePath, const _tchar* pFileName);
 	virtual CResources*			Clone(void);

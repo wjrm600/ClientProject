@@ -77,7 +77,7 @@ Client::_int Client::CTree::Update_Object(const _float& fTimeDelta)
 {
 	Engine::CGameObject::Update_Object(fTimeDelta);
 
-	SetUp_OnTerrain();
+	//SetUp_OnTerrain();
 
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);

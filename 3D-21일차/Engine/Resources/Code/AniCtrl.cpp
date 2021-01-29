@@ -126,7 +126,7 @@ _bool Engine::CAniCtrl::Is_AnimationSetEnd(void)
 
 	m_pAniCtrl->GetTrackDesc(m_iCurrentTrack, &tTrackInfo);
 
-	if (tTrackInfo.Position >= m_dPeriod - 0.1)
+	if (tTrackInfo.Position >= m_dPeriod - 0.06)
 		return true;
 
 	return false;

@@ -85,6 +85,21 @@
     <Filter Include="02. GameObject\01. Stage\07. UI">
       <UniqueIdentifier>{05bc395a-b034-4f5e-8b39-a3469d92ae66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\01. Stage\08. Map">
+      <UniqueIdentifier>{7ec2f726-a50c-4f83-b0ad-a858a6bc6213}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Stage\08. Map\00. Intro010">
+      <UniqueIdentifier>{8351b674-e6b9-4720-b45f-d0891e2846fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Stage\08. Map\01. Collider">
+      <UniqueIdentifier>{691e46c5-caa8-4982-bc9e-e6a2448f6048}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Stage\08. Map\02. Ruin">
+      <UniqueIdentifier>{23e656f5-b48d-4763-98d6-b67e97a26539}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\01. Stage\08. Map\02. Ruin\00. Box">
+      <UniqueIdentifier>{2289ebf4-cba5-4c30-adc7-9d302e135a84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -162,6 +177,15 @@
     <ClInclude Include="..\Code\UI.h">
       <Filter>02. GameObject\01. Stage\07. UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\Intro010.h">
+      <Filter>02. GameObject\01. Stage\08. Map\00. Intro010</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\ColliderMesh.h">
+      <Filter>02. GameObject\01. Stage\08. Map\01. Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\RuinBox.h">
+      <Filter>02. GameObject\01. Stage\08. Map\02. Ruin\00. Box</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -220,6 +244,15 @@
     </ClCompile>
     <ClCompile Include="..\Code\UI.cpp">
       <Filter>02. GameObject\01. Stage\07. UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Intro010.cpp">
+      <Filter>02. GameObject\01. Stage\08. Map\00. Intro010</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\ColliderMesh.cpp">
+      <Filter>02. GameObject\01. Stage\08. Map\01. Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\RuinBox.cpp">
+      <Filter>02. GameObject\01. Stage\08. Map\02. Ruin\00. Box</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

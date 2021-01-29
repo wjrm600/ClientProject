@@ -244,6 +244,54 @@ _bool CCalculator::Collision_AABB(const _vec3 * pDestMin, const _vec3 * pDestMax
 	return true;
 }
 
+PICKING_RAY CCalculator::GetPicking_Ray(HWND hWnd)
+{
+	POINT		ptMouse{ 0 };
+
+	GetCursorPos(&ptMouse);
+	ScreenToClient(hWnd, &ptMouse);
+
+	_vec3	vMousePos;
+
+	D3DVIEWPORT9		ViewPort;
+	ZeroMemory(&ViewPort, sizeof(D3DVIEWPORT9));
+	m_pGraphicDev->GetViewport(&ViewPort);
+
+	// 뷰포트 -> 투영
+
+	vMousePos.x = (ptMouse.x / (ViewPort.Width * 0.5f)) - 1.f;
+	vMousePos.y = (ptMouse.y / -(ViewPort.Height * 0.5f)) + 1.f;
+	vMousePos.z = 0.f;
+
+	// L * W * V * P * (P^-1)
+	// L * W * V
+
+	// 투영 -> 뷰 스페이스
+	_matrix	matProj;
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+	D3DXMatrixInverse(&matProj, NULL, &matProj);
+	D3DXVec3TransformCoord(&vMousePos, &vMousePos, &matProj);
+
+	// 뷰 스페이스 -> 월드
+	_matrix	matView;
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	D3DXMatrixInverse(&matView, NULL, &matView);
+
+	_vec3	vRayPos, vRayDir;
+
+
+	vRayPos = _vec3(0.f, 0.f, 0.f);
+	vRayDir = vMousePos - vRayPos;
+
+	D3DXVec3TransformCoord(&vRayPos, &vRayPos, &matView);
+	D3DXVec3TransformNormal(&vRayDir, &vRayDir, &matView);
+
+	PICKING_RAY PickRay;
+	PickRay.Raypos = vRayPos;
+	PickRay.Raydir = vRayDir;
+	return PickRay;
+}
+
 _bool CCalculator::Collision_OBB(const _vec3 * pDestMin, const _vec3 * pDestMax, const _matrix * pDestWorld, const _vec3 * pSourMin, const _vec3 * pSourMax, const _matrix * pSourWorld)
 {
 	OBB		tObb[2];
@@ -286,6 +334,41 @@ _bool CCalculator::Collision_OBB(const _vec3 * pDestMin, const _vec3 * pDestMax,
 			if (fDistance[0] + fDistance[1] < fDistance[2])
 				return false;
 		}
+	}
+
+	return true;
+}
+
+_bool CCalculator::Collision_SphereOBB(const _vec3 * pDestMin, const _vec3 * pDestMax, const _matrix * pDestWorld, const _vec3* pSourCenter, const _float * pSourRadius)
+{
+	OBB		tObb;
+	ZeroMemory(&tObb, sizeof(OBB));
+
+	Set_Point(&tObb, pDestMin, pDestMax);
+	for (_uint i = 0; i < 8; ++i)
+	{
+		D3DXVec3TransformCoord(&tObb.vPoint[i], &tObb.vPoint[i], pDestWorld);
+	}
+
+	D3DXVec3TransformCoord(&tObb.vCenter, &tObb.vCenter, pDestWorld);
+
+	Set_Axis(&tObb);
+
+	_float		fDistance[3];
+
+	for (_uint j = 0; j < 3; ++j)
+	{
+		fDistance[0] = fabs(D3DXVec3Dot(&tObb.vProjAxis[0], &tObb.vAxis[j])) +
+			fabs(D3DXVec3Dot(&tObb.vProjAxis[1], &tObb.vAxis[j])) +
+			fabs(D3DXVec3Dot(&tObb.vProjAxis[2], &tObb.vAxis[j]));
+
+
+		fDistance[1] = *pSourRadius * 0.01f;
+
+		fDistance[2] = fabs(D3DXVec3Dot(&(*pSourCenter - tObb.vCenter), &tObb.vAxis[j]));
+
+		if (fDistance[0] + fDistance[1] < fDistance[2])
+			return false;
 	}
 
 	return true;

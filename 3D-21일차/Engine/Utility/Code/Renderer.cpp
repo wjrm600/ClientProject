@@ -36,8 +36,8 @@ void Engine::CRenderer::Render_GameObject(LPDIRECT3DDEVICE9 & pGraphicDev)
 	Render_Alpha(pGraphicDev);
 	Render_UI(pGraphicDev);
 
-	Render_DebugBuffer(L"MRT_Deferred");
-	Render_DebugBuffer(L"MRT_LightAcc");
+	//Render_DebugBuffer(L"MRT_Deferred");
+	//Render_DebugBuffer(L"MRT_LightAcc");
 
 	Clear_RenderGroup();
 }

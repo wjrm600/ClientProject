@@ -28,6 +28,7 @@
 #include <algorithm>
 #include <functional>
 #include <ctime>
+#include <strsafe.h>
 
 #ifdef _DEBUG
 
