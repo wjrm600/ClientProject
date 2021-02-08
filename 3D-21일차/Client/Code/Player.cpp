@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "Export_Function.h"
 #include "ColliderMesh.h"
+#include "RuinBox.h"
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphicDev)
 	: Engine::CGameObject(pGraphicDev)
@@ -86,15 +87,22 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 {
 	m_pTransformCom->Get_Info(Engine::INFO_LOOK, &m_vDir);
 
+	if (!m_bIntro)
+	{
+		m_pTransformCom->Move_Pos(&_vec3(-1.2f, 0.f, 0.f));
+		m_pMeshCom->Set_AnimationSet(148);
+		m_bIntro = true;
+	}
+
 	if (m_ePlayerMoveState == Engine::PMS_END)
 	{
-		if (GetAsyncKeyState(VK_UP) & 0x8000)
+		if (GetAsyncKeyState('W') & 0x8000)
 		{
-			if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+			if (GetAsyncKeyState('A') & 0x8000)
 			{
 				m_pTransformCom->m_vAngle.y = D3DXToRadian(-45.f);
 			}
-			else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+			else if (GetAsyncKeyState('D') & 0x8000)
 			{
 				m_pTransformCom->m_vAngle.y = D3DXToRadian(45.f);
 			}
@@ -116,13 +124,13 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 
 			m_pMeshCom->Set_AnimationSet(34);
 		}
-		else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+		else if (GetAsyncKeyState('S') & 0x8000)
 		{
-			if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+			if (GetAsyncKeyState('A') & 0x8000)
 			{
 				m_pTransformCom->m_vAngle.y = D3DXToRadian(225.f);
 			}
-			else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+			else if (GetAsyncKeyState('D') & 0x8000)
 			{
 				m_pTransformCom->m_vAngle.y = D3DXToRadian(135.f);
 			}
@@ -144,7 +152,7 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 
 			m_pMeshCom->Set_AnimationSet(34);
 		}
-		else if (GetAsyncKeyState(VK_LEFT) & 0x8000)
+		else if (GetAsyncKeyState('A') & 0x8000)
 		{
 			m_pTransformCom->m_vAngle.y = D3DXToRadian(270.f);
 			_vec3	vPos, vDir;
@@ -161,7 +169,7 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 
 			m_pMeshCom->Set_AnimationSet(34);
 		}
-		else if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
+		else if (GetAsyncKeyState('D') & 0x8000)
 		{
 			m_pTransformCom->m_vAngle.y = D3DXToRadian(90.f);
 			_vec3	vPos, vDir;
@@ -184,7 +192,7 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 			{
 				if (m_ePlayerHeightCollisionState == Engine::PHCS_SIDE)
 				{
-					m_FrameMatrix = m_pMeshCom->Get_FrameByName("mouse_com")->CombinedTransformationMatrix;
+					m_FrameMatrix = m_pMeshCom->Get_FrameByName("mouse_spine1")->CombinedTransformationMatrix;
 					m_ePlayerMoveState = Engine::PMS_CLIMBUP;
 					if (m_bColliderHigher)
 					{
@@ -194,25 +202,41 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 					{
 						m_pMeshCom->Set_AnimationSet(46);
 					}
+
+					if (m_bColliderFrontJump)
+					{
+						m_pMeshCom->Set_AnimationSet(38);
+					}
+
+					if (m_bOnRuinBox)
+					{
+						m_pMeshCom->Set_AnimationSet(95);
+					}
 				}
 				else if (m_ePlayerHeightCollisionState == Engine::PHCS_ON)
 				{
-					m_FrameMatrix = m_pMeshCom->Get_FrameByName("mouse_com")->CombinedTransformationMatrix;
-					m_ePlayerMoveState = Engine::PMS_CLIMBDOWN;
-					m_pMeshCom->Set_AnimationSet(106);
+					m_FrameMatrix = m_pMeshCom->Get_FrameByName("mouse_spine1")->CombinedTransformationMatrix;
+					if (m_bOnRuinBox)
+					{
+						m_ePlayerMoveState = Engine::PMS_CLIMBUP;
+						m_pMeshCom->Set_AnimationSet(38);
+					}
+					else
+					{
+						m_ePlayerMoveState = Engine::PMS_CLIMBDOWN;
+						m_pMeshCom->Set_AnimationSet(106);
+					}
 				}
 			}
 		}
 
-		if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
-		{
-			m_pMeshCom->Set_AnimationSet(134);
-		}
-
-		if (Engine::Get_DIMouseState(Engine::DIM_RB) & 0x80)
-		{
-			m_pMeshCom->Set_AnimationSet(148);
-		}
+		//if (!(GetAsyncKeyState('F') & 0x8000))
+		//{
+		//	if (Engine::Get_DIMouseState(Engine::DIM_LB) & 0x80)
+		//	{
+		//		m_pMeshCom->Set_AnimationSet(134);
+		//	}
+		//}
 	}
 
 	if ((m_ePlayerMoveState == Engine::PMS_CLIMBDOWN) && (m_bHanging == true))
@@ -237,7 +261,7 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 		{
 			_vec3 PostVec = _vec3(0.f, 0.f, 0.f);
 			_vec3 CurrentVec = _vec3(0.f, 0.f, 0.f);
-			_matrix FrameMatrix = m_pMeshCom->Get_FrameByName("mouse_com")->CombinedTransformationMatrix;
+			_matrix FrameMatrix = m_pMeshCom->Get_FrameByName("mouse_spine1")->CombinedTransformationMatrix;
 			_matrix TransformMatrix = *m_pTransformCom->Get_WorldMatrix();
 			_bool bCellGet = false;
 
@@ -249,7 +273,6 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 			_vec3 FramePosition = CurrentVec - PostVec;
 			m_pTransformCom->Move_Pos(&FramePosition);
 			m_ePlayerMoveState = Engine::PMS_END;
-			m_bResearchCell = CellResearch();
 		}
 		if (m_ePlayerMoveState == Engine::PMS_CLIMBDOWN)
 		{
@@ -257,7 +280,7 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 			{
 				_vec3 PostVec = _vec3(0.f, 0.f, 0.f);
 				_vec3 CurrentVec = _vec3(0.f, 0.f, 0.f);
-				_matrix FrameMatrix = m_pMeshCom->Get_FrameByName("mouse_com")->CombinedTransformationMatrix;
+				_matrix FrameMatrix = m_pMeshCom->Get_FrameByName("mouse_spine1")->CombinedTransformationMatrix;
 				_matrix TransformMatrix = *m_pTransformCom->Get_WorldMatrix();
 				_bool bCellGet = false;
 
@@ -267,7 +290,7 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 				D3DXVec3TransformCoord(&PostVec, &PostVec, &m_FrameMatrix);
 				D3DXVec3TransformCoord(&CurrentVec, &CurrentVec, &FrameMatrix);
 				_vec3 FramePosition = CurrentVec - PostVec;
-				FramePosition.y += 0.5f;
+				//FramePosition.y -= 0.5f;
 				m_pTransformCom->Move_Pos(&FramePosition);
 				m_pTransformCom->Rotation(Engine::ROT_Y, D3DXToRadian(180.f));
 				m_pMeshCom->Set_AnimationSet(104);
@@ -284,7 +307,7 @@ void Client::CPlayer::Key_Input(const _float& fTimeDelta)
 		}
 	}
 
-
+	m_bResearchCell = CellResearch();
 }
 
 void CPlayer::Load_Object(_vec3 Position)
@@ -340,40 +363,86 @@ bool CPlayer::SphereCollision_ToObject(CGameObject* GameObject)
 	return false;
 }
 
-bool	CPlayer::BoxCollision_ToObject(CGameObject* GameObject)
+bool	CPlayer::BoxCollision_ToObject(CGameObject* GameObject, const _tchar* ObjectKinds)
 {
-	CColliderMesh* pObjColliderCom = dynamic_cast<CColliderMesh*>(GameObject);
-	NULL_CHECK_RETURN(pObjColliderCom, false);
-
-	_vec3 vBoxMin = _vec3(-(pObjColliderCom->m_pColliderCom->m_fBoxWidth*0.5f), -(pObjColliderCom->m_pColliderCom->m_fBoxHeight)*0.5f, -(pObjColliderCom->m_pColliderCom->m_fBoxDepth)*0.5f);
-	_vec3 vBoxMax = _vec3((pObjColliderCom->m_pColliderCom->m_fBoxWidth*0.5f), (pObjColliderCom->m_pColliderCom->m_fBoxHeight)*0.5f, (pObjColliderCom->m_pColliderCom->m_fBoxDepth)*0.5f);
-
-	bool a;
-	auto iter = m_mapCollider.begin();
-	for (; iter != m_mapCollider.end(); iter++)
+	if (ObjectKinds == L"CollMesh")
 	{
-		if (a = (m_pCalculatorCom->Collision_SphereOBB(&vBoxMin, &vBoxMax, pObjColliderCom->m_pTransformCom->Get_WorldMatrix(), &m_pTransformCom->m_vInfo[Engine::INFO_POS], &iter->second->m_fSphereRadius)))
+		CColliderMesh* pObjColliderCom = dynamic_cast<CColliderMesh*>(GameObject);
+		NULL_CHECK_RETURN(pObjColliderCom, false);
+
+		_vec3 vBoxMin = _vec3(-(pObjColliderCom->m_pColliderCom->m_fBoxWidth*0.5f), -(pObjColliderCom->m_pColliderCom->m_fBoxHeight)*0.5f, -(pObjColliderCom->m_pColliderCom->m_fBoxDepth)*0.5f);
+		_vec3 vBoxMax = _vec3((pObjColliderCom->m_pColliderCom->m_fBoxWidth*0.5f), (pObjColliderCom->m_pColliderCom->m_fBoxHeight)*0.5f, (pObjColliderCom->m_pColliderCom->m_fBoxDepth)*0.5f);
+
+		bool a;
+		auto iter = m_mapCollider.begin();
+		for (; iter != m_mapCollider.end(); iter++)
 		{
-			if ((pObjColliderCom->m_pTransformCom->m_vInfo[Engine::INFO_POS].y + (pObjColliderCom->m_pColliderCom->m_fBoxHeight * 0.25f * 0.01f)) < m_pTransformCom->m_vInfo[Engine::INFO_POS].y)
+			if (a = (m_pCalculatorCom->Collision_SphereOBB(&vBoxMin, &vBoxMax, pObjColliderCom->m_pTransformCom->Get_WorldMatrix(), &m_pTransformCom->m_vInfo[Engine::INFO_POS], &iter->second->m_fSphereRadius)))
 			{
-				m_ePlayerHeightCollisionState = Engine::PHCS_ON;
-			}
-			else
-			{
-				m_ePlayerHeightCollisionState = Engine::PHCS_SIDE;
-				if (pObjColliderCom->m_eColliderHeight == Engine::CH_HIGH)
+				if ((pObjColliderCom->m_pTransformCom->m_vInfo[Engine::INFO_POS].y + (pObjColliderCom->m_pColliderCom->m_fBoxHeight * 0.25f * 0.01f)) < m_pTransformCom->m_vInfo[Engine::INFO_POS].y)
 				{
-					m_bColliderHigher = true;
+					m_ePlayerHeightCollisionState = Engine::PHCS_ON;
 				}
-				else if (pObjColliderCom->m_eColliderHeight == Engine::CH_LOW)
+				else
 				{
-					m_bColliderHigher = false;
+					m_ePlayerHeightCollisionState = Engine::PHCS_SIDE;
+					if (pObjColliderCom->m_eColliderHeight == Engine::CH_HIGH)
+					{
+						m_bColliderHigher = true;
+						m_bColliderFrontJump = false;
+					}
+					else if (pObjColliderCom->m_eColliderHeight == Engine::CH_LOW)
+					{
+						m_bColliderHigher = false;
+						m_bColliderFrontJump = false;
+					}
+					else if (pObjColliderCom->m_eColliderHeight == Engine::CH_FRONTJUMP)
+					{
+						m_bColliderHigher = false;
+						m_bColliderFrontJump = true;
+					}
+					else if (pObjColliderCom->m_eColliderHeight == Engine::CH_NEXTSTAGE)
+					{
+						m_bColliderHigher = false;
+						m_bColliderFrontJump = false;
+						m_bNextStage = true;
+					}
 				}
+				return true;
 			}
-			return true;
 		}
+		return false;
 	}
-	return false;
+	else if (ObjectKinds == L"RuinBox")
+	{
+		m_bOnRuinBox = false;
+		CRuinBox* pObjColliderCom = dynamic_cast<CRuinBox*>(GameObject);
+		NULL_CHECK_RETURN(pObjColliderCom, false);
+
+		_vec3 vBoxMin = _vec3(-(pObjColliderCom->m_pColliderCom->m_fBoxWidth*0.5f), -(pObjColliderCom->m_pColliderCom->m_fBoxHeight)*0.5f, -(pObjColliderCom->m_pColliderCom->m_fBoxDepth)*0.5f);
+		_vec3 vBoxMax = _vec3((pObjColliderCom->m_pColliderCom->m_fBoxWidth*0.5f), (pObjColliderCom->m_pColliderCom->m_fBoxHeight)*0.5f, (pObjColliderCom->m_pColliderCom->m_fBoxDepth)*0.5f);
+
+		bool a;
+		auto iter = m_mapCollider.begin();
+		for (; iter != m_mapCollider.end(); iter++)
+		{
+			if (a = (m_pCalculatorCom->Collision_SphereOBB(&vBoxMin, &vBoxMax, pObjColliderCom->m_pTransformCom->Get_WorldMatrix(), &m_pTransformCom->m_vInfo[Engine::INFO_POS], &iter->second->m_fSphereRadius)))
+			{
+				if ((pObjColliderCom->m_pTransformCom->m_vInfo[Engine::INFO_POS].y + (pObjColliderCom->m_pColliderCom->m_fBoxHeight * 0.25f * 0.01f)) < m_pTransformCom->m_vInfo[Engine::INFO_POS].y)
+				{
+					m_ePlayerHeightCollisionState = Engine::PHCS_ON;
+					m_bOnRuinBox = true;
+				}
+				else
+				{
+					m_ePlayerHeightCollisionState = Engine::PHCS_SIDE;
+					m_bOnRuinBox = true;
+				}
+				return true;
+			}
+		}
+		return false;
+	}
 }
 
 bool CPlayer::CellResearch()
@@ -411,7 +480,7 @@ HRESULT Client::CPlayer::Ready_Object(void)
 }
 Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 {
-	//SetUp_OnTerrain();
+	SetUp_OnTerrain();
 	Key_Input(fTimeDelta);
 	Engine::CGameObject::Update_Object(fTimeDelta);
 	
@@ -419,7 +488,7 @@ Client::_int Client::CPlayer::Update_Object(const _float& fTimeDelta)
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 
-	SetUp_OnTerrain();
+	//SetUp_OnTerrain();
 	return 0;
 }
 void Client::CPlayer::Render_Object(void)
@@ -440,34 +509,36 @@ void Client::CPlayer::Render_Object(void)
 	pEffect->EndPass();
 	pEffect->End();
 
-	m_pNaviMeshCom->Render_NaviMeshes();
-
-	Engine::_matrix matWorld;
-	auto iter = m_mapCollider.begin();
-	int mrepeat = 0;
-	char* ColName;
-	for (; iter != m_mapCollider.end(); iter++)
+	if (false)
 	{
-		ColName = new char[20];
-		for(_uint nrepeat = 0; nrepeat < m_vColliderName[mrepeat].size(); nrepeat++)
-		{
-			ColName[nrepeat] = m_vColliderName[mrepeat][nrepeat];
-		}
-		const Engine::D3DXFRAME_DERIVED* pFrame = m_pMeshCom->Get_FrameByName(ColName);
-		m_pTransformCom->Get_WorldMatrix(&matWorld);
-		matWorld = pFrame->CombinedTransformationMatrix * matWorld;
-		if (m_bHeightCollider)
-		{
-			iter->second->Render_Collider(Engine::COL_TRUE, &matWorld);
-		}
-		else
-		{
-			iter->second->Render_Collider(Engine::COL_FALSE, &matWorld);
-		}
-		mrepeat++;
-		Engine::Safe_Delete_Array(ColName);
-	}
+		m_pNaviMeshCom->Render_NaviMeshes();
 
+		Engine::_matrix matWorld;
+		auto iter = m_mapCollider.begin();
+		int mrepeat = 0;
+		char* ColName;
+		for (; iter != m_mapCollider.end(); iter++)
+		{
+			ColName = new char[20];
+			for (_uint nrepeat = 0; nrepeat < m_vColliderName[mrepeat].size(); nrepeat++)
+			{
+				ColName[nrepeat] = m_vColliderName[mrepeat][nrepeat];
+			}
+			const Engine::D3DXFRAME_DERIVED* pFrame = m_pMeshCom->Get_FrameByName(ColName);
+			m_pTransformCom->Get_WorldMatrix(&matWorld);
+			matWorld = pFrame->CombinedTransformationMatrix * matWorld;
+			if (m_bHeightCollider)
+			{
+				iter->second->Render_Collider(Engine::COL_TRUE, &matWorld);
+			}
+			else
+			{
+				iter->second->Render_Collider(Engine::COL_FALSE, &matWorld);
+			}
+			mrepeat++;
+			Engine::Safe_Delete_Array(ColName);
+		}
+	}
 	Engine::Safe_Release(pEffect);
 }
 void Client::CPlayer::SetUp_OnTerrain(void)
@@ -477,9 +548,15 @@ void Client::CPlayer::SetUp_OnTerrain(void)
 	BOOL	bHeightColl;
 	_float	MeshDistance;
 	_float	fSaveY;
+	_float	CompareYMesh1 = 0;
+	_float	CompareYMesh2 = 0;
+	_float	CompareYMesh3 = 0;
+
+	LPD3DXMESH HeightMesh = dynamic_cast<Engine::CStaticMesh*>(Engine::Get_Component(L"GameLogic", L"Intro010", L"Com_Mesh", Engine::ID_STATIC))->m_pMesh;
+	LPD3DXMESH HeightMesh2 = dynamic_cast<Engine::CStaticMesh*>(Engine::Get_Component(L"GameLogic", L"Intro010_Brick", L"Com_Mesh", Engine::ID_STATIC))->m_pMesh;
+	LPD3DXMESH HeightMesh3 = dynamic_cast<Engine::CStaticMesh*>(Engine::Get_Component(L"Environment", L"RuinBox", L"Com_Mesh", Engine::ID_STATIC))->m_pMesh;
 
 	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
-	LPD3DXMESH HeightMesh = dynamic_cast<Engine::CStaticMesh*>(Engine::Get_Component(L"GameLogic", L"Intro010", L"Com_Mesh", Engine::ID_STATIC))->m_pMesh;
 
 	vPosition.y = 0.5f+vPosition.y;
 	fSaveY = vPosition.y;
@@ -503,21 +580,102 @@ void Client::CPlayer::SetUp_OnTerrain(void)
 					nullptr);
 	if(bHeightColl)
 	{
-		m_pTransformCom->m_vInfo[Engine::INFO_POS].y = fSaveY - MeshDistance;
-		if (m_ePlayerMoveState == Engine::PMS_FRONTJUMP)
-		{
-			_matrix mMouse_Com = m_pMeshCom->Get_FrameByName("mouse_com")->CombinedTransformationMatrix;
-			mMouse_Com *= m_pTransformCom->m_matWorld;
-			mMouse_Com.m[3][1] = fSaveY - MeshDistance;
-			_matrix TransformInverseMatrix = m_pTransformCom->m_matWorld;
-			D3DXMatrixInverse(&TransformInverseMatrix, 0, &TransformInverseMatrix);
-			_matrix FrameInverseMatrix = m_pMeshCom->Get_FrameByName("mouse_com")->TransformationMatrix;
-			D3DXMatrixInverse(&FrameInverseMatrix, 0, &FrameInverseMatrix);
+		CompareYMesh1 = fSaveY - MeshDistance;
+		//if (m_ePlayerMoveState == Engine::PMS_FRONTJUMP)
+		//{
+		//	_matrix mMouse_Com = m_pMeshCom->Get_FrameByName("mouse_com")->CombinedTransformationMatrix;
+		//	mMouse_Com *= m_pTransformCom->m_matWorld;
+		//	mMouse_Com.m[3][1] = fSaveY - MeshDistance;
+		//	_matrix TransformInverseMatrix = m_pTransformCom->m_matWorld;
+		//	D3DXMatrixInverse(&TransformInverseMatrix, 0, &TransformInverseMatrix);
+		//	_matrix FrameInverseMatrix = m_pMeshCom->Get_FrameByName("mouse_com")->TransformationMatrix;
+		//	D3DXMatrixInverse(&FrameInverseMatrix, 0, &FrameInverseMatrix);
+		//
+		//	mMouse_Com *= TransformInverseMatrix;
+		//	mMouse_Com = FrameInverseMatrix * mMouse_Com;
+		//	Engine::D3DXFRAME_DERIVED* FrameBy = m_pMeshCom->Get_FrameByName("mouse_com");
+		//	m_pMeshCom->Update_FrameMatrices(FrameBy, &mMouse_Com);
+		//}
+	}
 
-			mMouse_Com *= TransformInverseMatrix;
-			mMouse_Com = FrameInverseMatrix * mMouse_Com;
-			Engine::D3DXFRAME_DERIVED* FrameBy = m_pMeshCom->Get_FrameByName("mouse_com");
-			m_pMeshCom->Update_FrameMatrices(FrameBy, &mMouse_Com);
+	m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
+	vPosiDir = _vec3(0.f, -1.f, 0.f);
+	vPosition.y = 0.5f + vPosition.y;
+	fSaveY = vPosition.y;
+
+	dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"GameLogic", L"Intro010_Brick", L"Com_Transform", Engine::ID_DYNAMIC))->Get_WorldMatrix(&matWorld);
+	D3DXMatrixInverse(&matWorld, NULL, &matWorld);
+
+	D3DXVec3TransformCoord(&vPosition, &vPosition, &matWorld);
+	D3DXVec3TransformNormal(&vPosiDir, &vPosiDir, &matWorld);
+
+	D3DXIntersect(HeightMesh2,
+					&vPosition,
+					&vPosiDir,
+					&bHeightColl,
+					nullptr,
+					nullptr,
+					nullptr,
+					&MeshDistance,
+					nullptr,
+					nullptr);
+	if (bHeightColl)
+	{
+		CompareYMesh2 = fSaveY - MeshDistance;
+	}
+
+	if (m_bOnRuinBox)
+	{
+		m_pTransformCom->Get_Info(Engine::INFO_POS, &vPosition);
+		vPosiDir = _vec3(0.f, -1.f, 0.f);
+		vPosition.y = 1.f + vPosition.y;
+		fSaveY = vPosition.y;
+
+		dynamic_cast<Engine::CTransform*>(Engine::Get_Component(L"Environment", L"RuinBox", L"Com_Transform", Engine::ID_DYNAMIC))->Get_WorldMatrix(&matWorld);
+		D3DXMatrixInverse(&matWorld, NULL, &matWorld);
+
+		D3DXVec3TransformCoord(&vPosition, &vPosition, &matWorld);
+		D3DXVec3TransformNormal(&vPosiDir, &vPosiDir, &matWorld);
+
+		D3DXIntersect(HeightMesh3,
+			&vPosition,
+			&vPosiDir,
+			&bHeightColl,
+			nullptr,
+			nullptr,
+			nullptr,
+			&MeshDistance,
+			nullptr,
+			nullptr);
+		if (bHeightColl)
+		{
+			CompareYMesh3 = fSaveY - MeshDistance;
+		}
+	}
+
+	if((CompareYMesh1 == 0) && (CompareYMesh2 == 0) && (CompareYMesh3 == 0))
+	{ 
+	}
+	else if (CompareYMesh1 > CompareYMesh2)
+	{
+		if (CompareYMesh1 > CompareYMesh3)
+		{
+			m_pTransformCom->m_vInfo[Engine::INFO_POS].y = CompareYMesh1;
+		}
+		else if(CompareYMesh1 <= CompareYMesh3)
+		{
+			m_pTransformCom->m_vInfo[Engine::INFO_POS].y = CompareYMesh3;
+		}
+	}
+	else if(CompareYMesh1 <= CompareYMesh2)
+	{
+		if (CompareYMesh2 > CompareYMesh3)
+		{
+			m_pTransformCom->m_vInfo[Engine::INFO_POS].y = CompareYMesh2;
+		}
+		else if(CompareYMesh2 <= CompareYMesh3)
+		{
+			m_pTransformCom->m_vInfo[Engine::INFO_POS].y = CompareYMesh3;
 		}
 	}
 }

@@ -30,11 +30,14 @@
 #include <ctime>
 #include <strsafe.h>
 
+
+
 #ifdef _DEBUG
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
+
 
 #ifndef DBG_NEW 
 
@@ -45,6 +48,10 @@
 
 #endif // _DEBUG
 
+#include <io.h>
+#include "fmod.h"
+#pragma comment(lib, "fmodex_vc.lib")
+#include "SoundMgr.h"
 
 using namespace std;
 

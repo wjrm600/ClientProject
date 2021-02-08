@@ -16,7 +16,8 @@ public:
 	const _vec3*		Get_Min(void) { return &m_vMin; }
 	const _vec3*		Get_Max(void) { return &m_vMax; }
 	const _matrix*		Get_CollMatrix(void) { return &m_matCollMatrix; }
-	ID3DXMesh*			Get_CollMesh(void) { return m_pBox; }
+	ID3DXMesh*			Get_CollBoxMesh(void) { return m_pBox; }
+	ID3DXMesh*			Get_CollBoxSphereMesh(void) { return m_pSphere; }
 public:
 	HRESULT		Ready_Collider(const _vec3* pVtxPos, const _ulong& dwNumVtxCnt, const _ulong& dwStride);
 	HRESULT		Ready_Collider();
@@ -34,6 +35,7 @@ public:
 	LPDIRECT3DINDEXBUFFER9		m_pIB = nullptr;
 	LPDIRECT3DTEXTURE9			m_pTexture[COL_END];
 	LPD3DXMESH					m_pBox = nullptr;
+	LPD3DXMESH					m_pSphere = nullptr;
 #endif
 	bool m_bColliderObject = false;
 public:

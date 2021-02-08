@@ -122,6 +122,14 @@ void Client::CRuinBox::Render_Object(void)
 	
 	Engine::Safe_Release(pEffect);
 
+	if (m_bHeightCollider)
+	{
+		m_pColliderCom->Render_Collider(Engine::COL_TRUE, &m_pTransformCom->m_matWorld);
+	}
+	else
+	{
+		m_pColliderCom->Render_Collider(Engine::COL_FALSE, &m_pTransformCom->m_matWorld);
+	}
 	//m_pTransformCom->Set_Transform(m_pGraphicDev);
 	//m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	//
@@ -197,9 +205,23 @@ void CRuinBox::Key_Input(const _float & fTimeDelta)
 			}
 			else
 			{
-				_float MoveDis = m_stPickRuinBox.Raypos.z - m_pCalculatorCom->GetPicking_Ray(g_hWnd).Raypos.z;
-				_vec3 MoveRuinUpVec = m_pTransformCom->m_vInfo[Engine::INFO_UP] * fTimeDelta * 300;
-				m_pTransformCom->Set_Pos(&(m_pTransformCom->m_vInfo[Engine::INFO_POS] - MoveRuinUpVec));
+				_float MoveDis = (m_stPickRuinBox.Raydir.y - m_pCalculatorCom->GetPicking_Ray(g_hWnd).Raydir.y) * 10000;
+				_vec3 MoveRuinUpVec = m_pTransformCom->m_vInfo[Engine::INFO_UP] * fTimeDelta * MoveDis;
+				if ((m_pTransformCom->m_vInfo[Engine::INFO_POS].z >= (m_vOriPosition - (m_pTransformCom->m_vInfo[Engine::INFO_UP] * m_fMoveGage)).z) &&
+					(m_pTransformCom->m_vInfo[Engine::INFO_POS].z <= m_vOriPosition.z))
+				{
+					m_pTransformCom->Set_Pos(&(m_pTransformCom->m_vInfo[Engine::INFO_POS] - MoveRuinUpVec));
+					m_bColliderOn = false;
+				}
+				else if((m_pTransformCom->m_vInfo[Engine::INFO_POS].z < (m_vOriPosition - (m_pTransformCom->m_vInfo[Engine::INFO_UP] * m_fMoveGage)).z))
+				{
+					m_pTransformCom->Set_Pos(&(m_vOriPosition - (m_pTransformCom->m_vInfo[Engine::INFO_UP] * m_fMoveGage)));
+					m_bColliderOn = true;
+				}
+				else if ((m_pTransformCom->m_vInfo[Engine::INFO_POS].z > m_vOriPosition.z))
+				{
+					m_pTransformCom->Set_Pos(&(m_vOriPosition));
+				}
 			}
 		}
 	}

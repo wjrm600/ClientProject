@@ -62,7 +62,7 @@ HRESULT Engine::CGraphicDev::Ready_GraphicDev(HWND hWnd,
 	Parameters.AutoDepthStencilFormat = D3DFMT_D24S8;
 	
 	Parameters.FullScreen_RefreshRateInHz = D3DPRESENT_RATE_DEFAULT;
-	Parameters.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+	Parameters.PresentationInterval = D3DPRESENT_INTERVAL_DEFAULT;
 
 	// 그래픽 디바이스 컴객체 생성
 	FAILED_CHECK_RETURN(m_pSDK->CreateDevice(D3DADAPTER_DEFAULT, D3DDEVTYPE_HAL,

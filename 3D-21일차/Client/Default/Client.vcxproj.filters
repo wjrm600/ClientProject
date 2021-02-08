@@ -100,6 +100,18 @@
     <Filter Include="02. GameObject\01. Stage\08. Map\02. Ruin\00. Box">
       <UniqueIdentifier>{2289ebf4-cba5-4c30-adc7-9d302e135a84}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02. GameObject\02. Public\01. StaticCamera">
+      <UniqueIdentifier>{3e0d6196-f716-46ba-b3de-1520ed2014e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. BossStage">
+      <UniqueIdentifier>{f35fd979-184f-4b38-ac70-05398a0c8486}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. BossStage\00. Boss">
+      <UniqueIdentifier>{addbcc39-eb14-4616-91a9-afc77aeadbce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. GameObject\03. BossStage\01. Player">
+      <UniqueIdentifier>{a7cf5aea-3890-4d3f-9204-51b901fe7709}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -186,6 +198,42 @@
     <ClInclude Include="..\Code\RuinBox.h">
       <Filter>02. GameObject\01. Stage\08. Map\02. Ruin\00. Box</Filter>
     </ClInclude>
+    <ClInclude Include="..\Code\BossStage.h">
+      <Filter>01. Scene\01. Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\StaticCamera.h">
+      <Filter>02. GameObject\02. Public\01. StaticCamera</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\Boss.h">
+      <Filter>02. GameObject\03. BossStage\00. Boss</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\BossStagePlayer.h">
+      <Filter>02. GameObject\03. BossStage\01. Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\fmod.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\fmod.hpp">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\fmod_codec.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\fmod_dsp.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\fmod_errors.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\fmod_memoryinfo.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\fmod_output.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Code\SoundMgr.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -253,6 +301,21 @@
     </ClCompile>
     <ClCompile Include="..\Code\RuinBox.cpp">
       <Filter>02. GameObject\01. Stage\08. Map\02. Ruin\00. Box</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\BossStage.cpp">
+      <Filter>01. Scene\01. Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\StaticCamera.cpp">
+      <Filter>02. GameObject\02. Public\01. StaticCamera</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\Boss.cpp">
+      <Filter>02. GameObject\03. BossStage\00. Boss</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\BossStagePlayer.cpp">
+      <Filter>02. GameObject\03. BossStage\01. Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Code\SoundMgr.cpp">
+      <Filter>98. Header</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -57,41 +57,53 @@ _vec3 CNaviMesh::Move_OnNaviMesh(const _vec3 * pTargetPos, const _vec3 * pTarget
 
 	else if (CCell::STOP == m_vecCell[m_dwIndex]->CompareCell(&vEndPos, &m_dwIndex))
 	{
-		_vec3 PointA_Dis = *m_vecCell[m_dwIndex]->Get_Point(Engine::CCell::POINT_A) - *pTargetPos;
-		_vec3 PointB_Dis = *m_vecCell[m_dwIndex]->Get_Point(Engine::CCell::POINT_B) - *pTargetPos;
-		_vec3 PointC_Dis = *m_vecCell[m_dwIndex]->Get_Point(Engine::CCell::POINT_C) - *pTargetPos;
-		_float ADistnaceLength = D3DXVec3Length(&PointA_Dis);
-		_float BDistnaceLength = D3DXVec3Length(&PointB_Dis);
-		_float CDistnaceLength = D3DXVec3Length(&PointC_Dis);
-
-		PointDistanceOrderSort(ADistnaceLength, BDistnaceLength, CDistnaceLength);
-
-		_vec3 ComparedVec = *m_vecCell[m_dwIndex]->Get_Point(DistanceOrder[0]) - *m_vecCell[m_dwIndex]->Get_Point(DistanceOrder[1]);
-		_vec3 DirectionVec = *pTargetDir;
-
-		D3DXVec3Normalize(&ComparedVec, &ComparedVec);
-		D3DXVec3Normalize(&DirectionVec, &DirectionVec);
-
-		_float ResultNor = D3DXVec3Dot(&ComparedVec, &DirectionVec);
-		if (ResultNor > 0)
+		_bool bCellGet = false;
+		for (_ulong i = 0; i < GetVecCell()->size(); ++i)
 		{
-			GoalVec = *m_vecCell[m_dwIndex]->Get_Point(DistanceOrder[0]) - *pTargetPos;
-			D3DXVec3Normalize(&GoalVec, &GoalVec);
-			GoalVec *= fTimeDelta;
-			GoalVec += *pTargetPos;
+			bCellGet = (*(GetVecCell()))[i]->Compare_SearchCell(&((*pTargetPos) + ((*pTargetDir)*2.5f)), &(m_dwIndex));
 		}
-		else if (ResultNor < 0)
+		if (bCellGet)
 		{
-			GoalVec = *m_vecCell[m_dwIndex]->Get_Point(DistanceOrder[1]) - *pTargetPos;
-			D3DXVec3Normalize(&GoalVec, &GoalVec);
-			GoalVec *= fTimeDelta;
-			GoalVec += *pTargetPos;
+			return vEndPos;
 		}
 		else
 		{
-			GoalVec = *pTargetPos;
+			_vec3 PointA_Dis = *m_vecCell[m_dwIndex]->Get_Point(Engine::CCell::POINT_A) - *pTargetPos;
+			_vec3 PointB_Dis = *m_vecCell[m_dwIndex]->Get_Point(Engine::CCell::POINT_B) - *pTargetPos;
+			_vec3 PointC_Dis = *m_vecCell[m_dwIndex]->Get_Point(Engine::CCell::POINT_C) - *pTargetPos;
+			_float ADistnaceLength = D3DXVec3Length(&PointA_Dis);
+			_float BDistnaceLength = D3DXVec3Length(&PointB_Dis);
+			_float CDistnaceLength = D3DXVec3Length(&PointC_Dis);
+
+			PointDistanceOrderSort(ADistnaceLength, BDistnaceLength, CDistnaceLength);
+
+			_vec3 ComparedVec = *m_vecCell[m_dwIndex]->Get_Point(DistanceOrder[0]) - *m_vecCell[m_dwIndex]->Get_Point(DistanceOrder[1]);
+			_vec3 DirectionVec = *pTargetDir;
+
+			D3DXVec3Normalize(&ComparedVec, &ComparedVec);
+			D3DXVec3Normalize(&DirectionVec, &DirectionVec);
+
+			_float ResultNor = D3DXVec3Dot(&ComparedVec, &DirectionVec);
+			if (ResultNor > 0)
+			{
+				GoalVec = *m_vecCell[m_dwIndex]->Get_Point(DistanceOrder[0]) - *pTargetPos;
+				D3DXVec3Normalize(&GoalVec, &GoalVec);
+				GoalVec *= fTimeDelta;
+				GoalVec += *pTargetPos;
+			}
+			else if (ResultNor < 0)
+			{
+				GoalVec = *m_vecCell[m_dwIndex]->Get_Point(DistanceOrder[1]) - *pTargetPos;
+				D3DXVec3Normalize(&GoalVec, &GoalVec);
+				GoalVec *= fTimeDelta;
+				GoalVec += *pTargetPos;
+			}
+			else
+			{
+				GoalVec = *pTargetPos;
+			}
+			return GoalVec;
 		}
-		return GoalVec;
 	}
 }
 

@@ -8,6 +8,7 @@
 #include "TestPlayer.h"
 #include "TestMonster.h"
 #include "Loading.h"
+#include "SoundMgr.h"
 
 BEGIN(Client)
 

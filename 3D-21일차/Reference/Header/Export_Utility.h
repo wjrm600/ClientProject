@@ -14,7 +14,6 @@
 #include "Shader.h"
 
 #include "RenderTargetMgr.h"
-
 BEGIN(Engine)
 
 // management

@@ -82,7 +82,7 @@
     <OutDir>../Bin\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <LinkIncremental>false</LinkIncremental>
+    <LinkIncremental>true</LinkIncremental>
     <IncludePath>$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
     <LibraryPath>$(DXSDK_DIR)lib\x86;$(LibraryPath)</LibraryPath>
     <OutDir>../Bin\</OutDir>
@@ -105,7 +105,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;System.lib;Resources.lib;Utility.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;System.lib;Resources.lib;Utility.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalLibraryDirectories>../../Reference/Library;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
@@ -132,17 +132,18 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
-      <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <IntrinsicFunctions>false</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../Code;../Header;../../Base;../../Reference/Header;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;System.lib;Resources.lib;Utility.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;System.lib;Resources.lib;Utility.lib;fmodex_vc.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalLibraryDirectories>../../Reference/Library;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
@@ -172,9 +173,19 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Code\BackGround.h" />
+    <ClInclude Include="..\Code\Boss.h" />
+    <ClInclude Include="..\Code\BossStage.h" />
+    <ClInclude Include="..\Code\BossStagePlayer.h" />
     <ClInclude Include="..\Code\ColliderMesh.h" />
     <ClInclude Include="..\Code\DynamicCamera.h" />
     <ClInclude Include="..\Code\Effect.h" />
+    <ClInclude Include="..\Code\fmod.h" />
+    <ClInclude Include="..\Code\fmod.hpp" />
+    <ClInclude Include="..\Code\fmod_codec.h" />
+    <ClInclude Include="..\Code\fmod_dsp.h" />
+    <ClInclude Include="..\Code\fmod_errors.h" />
+    <ClInclude Include="..\Code\fmod_memoryinfo.h" />
+    <ClInclude Include="..\Code\fmod_output.h" />
     <ClInclude Include="..\Code\Intro010.h" />
     <ClInclude Include="..\Code\Loading.h" />
     <ClInclude Include="..\Code\Logo.h" />
@@ -183,7 +194,9 @@
     <ClInclude Include="..\Code\Player.h" />
     <ClInclude Include="..\Code\RuinBox.h" />
     <ClInclude Include="..\Code\SkyBox.h" />
+    <ClInclude Include="..\Code\SoundMgr.h" />
     <ClInclude Include="..\Code\Stage.h" />
+    <ClInclude Include="..\Code\StaticCamera.h" />
     <ClInclude Include="..\Code\Stone.h" />
     <ClInclude Include="..\Code\Sword.h" />
     <ClInclude Include="..\Code\Terrain.h" />
@@ -202,6 +215,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Code\BackGround.cpp" />
+    <ClCompile Include="..\Code\Boss.cpp" />
+    <ClCompile Include="..\Code\BossStage.cpp" />
+    <ClCompile Include="..\Code\BossStagePlayer.cpp" />
     <ClCompile Include="..\Code\ColliderMesh.cpp" />
     <ClCompile Include="..\Code\DynamicCamera.cpp" />
     <ClCompile Include="..\Code\Effect.cpp" />
@@ -213,7 +229,9 @@
     <ClCompile Include="..\Code\Player.cpp" />
     <ClCompile Include="..\Code\RuinBox.cpp" />
     <ClCompile Include="..\Code\SkyBox.cpp" />
+    <ClCompile Include="..\Code\SoundMgr.cpp" />
     <ClCompile Include="..\Code\Stage.cpp" />
+    <ClCompile Include="..\Code\StaticCamera.cpp" />
     <ClCompile Include="..\Code\Stone.cpp" />
     <ClCompile Include="..\Code\Sword.cpp" />
     <ClCompile Include="..\Code\Terrain.cpp" />

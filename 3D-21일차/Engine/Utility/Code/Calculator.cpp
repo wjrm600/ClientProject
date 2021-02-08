@@ -363,7 +363,7 @@ _bool CCalculator::Collision_SphereOBB(const _vec3 * pDestMin, const _vec3 * pDe
 			fabs(D3DXVec3Dot(&tObb.vProjAxis[2], &tObb.vAxis[j]));
 
 
-		fDistance[1] = *pSourRadius * 0.01f;
+		fDistance[1] = *pSourRadius * 0.02f;
 
 		fDistance[2] = fabs(D3DXVec3Dot(&(*pSourCenter - tObb.vCenter), &tObb.vAxis[j]));
 

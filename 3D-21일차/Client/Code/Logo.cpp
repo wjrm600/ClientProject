@@ -25,8 +25,8 @@ HRESULT CLogo::Ready_Scene(void)
 
 	m_pLoading = CLoading::Create(m_pGraphicDev, CLoading::LOADING_STAGE);
 	FAILED_CHECK_RETURN(m_pLoading, E_FAIL);
-
-
+	CSoundMgr::Get_Instance()->Initialize();
+	CSoundMgr::Get_Instance()->PlayBGM(L"HomeToMe.mp3");
 	return S_OK;
 }
 
@@ -54,7 +54,7 @@ Engine::_int CLogo::Update_Scene(const _float& fTimeDelta)
 void CLogo::Render_Scene(void)
 {
 	// DEBUG ¿ë
-	Engine::Render_Font(L"Font_Jinji", m_pLoading->Get_LoadString(), &_vec2(10.f, 10.f), D3DXCOLOR(1.f, 0.f, 0.f, 1.f));
+	Engine::Render_Font(L"Font_Cookie", m_pLoading->Get_LoadString(), &_vec2(1300.f, 800.f), D3DXCOLOR(1.f, 0.f, 0.f, 1.f));
 
 }
 

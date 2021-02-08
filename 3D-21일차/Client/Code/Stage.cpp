@@ -21,6 +21,8 @@ HRESULT CStage::Ready_Scene(void)
 	FAILED_CHECK_RETURN(Ready_GameLogic_Layer(L"GameLogic"), E_FAIL);
 	FAILED_CHECK_RETURN(Ready_LightInfo(), E_FAIL);
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
+	CSoundMgr::Get_Instance()->StopSound(CSoundMgr::CHANNELID::BGM);
+	CSoundMgr::Get_Instance()->PlayBGM(L"Forest.ogg");
 	//_crtBreakAlloc = 56398;
 	return S_OK;
 }
@@ -31,17 +33,63 @@ Engine::_int CStage::Update_Scene(const _float& fTimeDelta)
 	_uint CollCount = 0;
 	auto Playeriter = pGameLogicLayer->m_mapObject.begin();
 	auto Colliter = m_vecColliderMesh.begin();
+	auto EnvironmentIter = pEnvironmentLayer->m_mapObject.begin();
 	for (; Playeriter != pGameLogicLayer->m_mapObject.end(); Playeriter++)
 	{
 		if (Playeriter->first == L"Player")
 		{
+			m_bNextStage = dynamic_cast<CPlayer*>(Playeriter->second)->m_bNextStage;
+			m_vEye = (dynamic_cast<CPlayer*>(Playeriter->second))->m_pTransformCom->m_vInfo[Engine::INFO_POS];
+			m_vAt = (dynamic_cast<CPlayer*>(Playeriter->second))->m_pTransformCom->m_vInfo[Engine::INFO_POS];
+			m_vUp = _vec3(0.f, 1.f, 0.f);
+			if (m_vEye.x < 10.f)
+			{
+				m_vEye.z -= 6.f;
+				m_vEye.y += 5.f;
+			}
+			else if (m_vEye.x < 22.f)
+			{
+				m_vEye.z = 0.2f;
+				m_vEye.y += 2.f;
+			}
+			else if(m_vEye.x < 27.f)
+			{
+				m_vEye.x = 28.f;
+				m_vEye.y += 5.f;
+				m_vEye.z -= 2.f;
+			}
+			else if(m_vEye.x < 31.f)
+			{
+				m_vEye.y += 5.f;
+				m_vEye.z -= 3.f;
+			}
+			else
+			{
+				m_vEye.y += 1.5f;
+				m_vEye.z -= 4.f;
+			}
+			
+
+			pStaticCamera->CameraPositionUpdate(&m_vEye, &m_vAt, &m_vUp);
 			for (; Colliter != m_vecColliderMesh.end(); Colliter++)
 			{
-				IsColl = dynamic_cast<CPlayer*>(Playeriter->second)->BoxCollision_ToObject(*Colliter);
-				(*Colliter)->m_bHeightCollider = IsColl;
-				if (IsColl == true)
+				if (Colliter->first == L"CollMesh")
 				{
-					CollCount++;
+					IsColl = dynamic_cast<CPlayer*>(Playeriter->second)->BoxCollision_ToObject(Colliter->second, L"CollMesh");
+					dynamic_cast<CColliderMesh*>(Colliter->second)->m_bHeightCollider = IsColl;
+					if (IsColl == true)
+					{
+						CollCount++;
+					}
+				}
+				else if (Colliter->first == L"RuinBox")
+				{
+					IsColl = dynamic_cast<CPlayer*>(Playeriter->second)->BoxCollision_ToObject(Colliter->second, L"RuinBox");
+					dynamic_cast<CRuinBox*>(Colliter->second)->m_bHeightCollider = IsColl;
+					if (IsColl == true)
+					{
+						CollCount++;
+					}
 				}
 			}
 			if (CollCount != 0)
@@ -55,7 +103,28 @@ Engine::_int CStage::Update_Scene(const _float& fTimeDelta)
 			}
 		}
 	}
-	return Engine::CScene::Update_Scene(fTimeDelta);
+
+	_int iExit = Engine::CScene::Update_Scene(fTimeDelta);
+
+	if (GetAsyncKeyState('P') & 0x8000)
+	{
+		m_bNextStage = true;
+	}
+
+	if (m_bNextStage)
+	{
+		CScene*		pScene = nullptr;
+		pScene = CBossStage::Create(m_pGraphicDev);
+
+		FAILED_CHECK_RETURN(Engine::SetUp_Scene(pScene), E_FAIL);
+		FAILED_CHECK_RETURN(dynamic_cast<CBossStage*>(pScene)->Ready_LoadObjectFile(), E_FAIL);
+		FAILED_CHECK_RETURN(dynamic_cast<CBossStage*>(pScene)->Ready_LoadNaviMeshFile(), E_FAIL);
+		return iExit;
+	}
+
+	return iExit;
+
+	//return Engine::CScene::Update_Scene(fTimeDelta);
 }
 
 void CStage::Render_Scene(void)
@@ -76,17 +145,25 @@ HRESULT CStage::Ready_Environment_Layer(const _tchar * pLayerTag)
 
 	pGameObject = CRuinBox::Create(m_pGraphicDev, L"RuinBox");
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	m_vecColliderMesh.emplace(L"RuinBox", pGameObject);
 	FAILED_CHECK_RETURN(pEnvironmentLayer->Add_GameObject(L"RuinBox", pGameObject), E_FAIL);
 
 	//pGameObject = CTerrain::Create(m_pGraphicDev);
 	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
 	//FAILED_CHECK_RETURN(pEnvironmentLayer->Add_GameObject(L"Terrain", pGameObject), E_FAIL);
 
-	pGameObject = CDynamicCamera::Create(m_pGraphicDev, &_vec3(0.f, 10.f, -10.f),
-														&_vec3(0.f, 0.f, 10.f),
-														&_vec3(0.f, 1.f, 0.f));
+	//pGameObject = CDynamicCamera::Create(m_pGraphicDev, &_vec3(0.f, 10.f, -10.f),
+	//													&_vec3(0.f, 0.f, 10.f),
+	//													&_vec3(0.f, 1.f, 0.f));
+	//NULL_CHECK_RETURN(pGameObject, E_FAIL);
+	//FAILED_CHECK_RETURN(pEnvironmentLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
+
+	pGameObject = CStaticCamera::Create(m_pGraphicDev, &m_vEye,
+		&_vec3(0.f, 0.f, 10.f),
+		&_vec3(0.f, 1.f, 0.f));
 	NULL_CHECK_RETURN(pGameObject, E_FAIL);
-	FAILED_CHECK_RETURN(pEnvironmentLayer->Add_GameObject(L"DynamicCamera", pGameObject), E_FAIL);
+	pStaticCamera = dynamic_cast<CStaticCamera*>(pGameObject);
+	FAILED_CHECK_RETURN(pEnvironmentLayer->Add_GameObject(L"StaticCamera", pGameObject), E_FAIL);
 
 	
 	m_mapLayer.emplace(pLayerTag, pEnvironmentLayer);
@@ -156,25 +233,25 @@ HRESULT CStage::Ready_LightInfo(void)
 	// 0번 조명
 	tLightInfo.Type = D3DLIGHT_DIRECTIONAL;
 	
-	tLightInfo.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.0f);
-	tLightInfo.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 1.0f);
-	tLightInfo.Ambient = D3DXCOLOR(1.f, 1.f, 1.f, 1.0f);
+	tLightInfo.Diffuse = D3DXCOLOR(0.8f, 0.8f, 0.8f, 0.6f);
+	tLightInfo.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 0.5f);
+	tLightInfo.Ambient = D3DXCOLOR(0.6f, 0.6f, 0.5f, 0.6f);
 	
 	tLightInfo.Direction = _vec3(1.f, -1.f, 1.f);
 	
 	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 0)))
 		return E_FAIL;
 
-	// 1번 조명
-	tLightInfo.Type = D3DLIGHT_POINT;
-	tLightInfo.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 0.1f);
-	tLightInfo.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 0.1f);
-	tLightInfo.Ambient = D3DXCOLOR(1.f, 1.f, 1.f, 0.1f);
-	tLightInfo.Position = _vec3(5.f, 5.f, -5.f);
-	tLightInfo.Range = 10.f;
-	
-	if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 1)))
-		return E_FAIL;
+	//// 1번 조명
+	//tLightInfo.Type = D3DLIGHT_POINT;
+	//tLightInfo.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 0.1f);
+	//tLightInfo.Specular = D3DXCOLOR(1.f, 1.f, 1.f, 0.1f);
+	//tLightInfo.Ambient = D3DXCOLOR(1.f, 1.f, 1.f, 0.1f);
+	//tLightInfo.Position = _vec3(5.f, 5.f, -5.f);
+	//tLightInfo.Range = 1.f;
+	//
+	//if (FAILED(Engine::Ready_Light(m_pGraphicDev, &tLightInfo, 1)))
+	//	return E_FAIL;
 	//	
 	//// 2번 조명
 	//tLightInfo.Type = D3DLIGHT_POINT;
@@ -263,6 +340,15 @@ HRESULT CStage::Ready_LoadObjectFile(void)
 					pPlayer->Set_ColliderFrame(FrameNameText);
 				}
 				FAILED_CHECK_RETURN(pGameLogicLayer->Add_GameObject(L"Player", pPlayer), E_FAIL);
+
+
+
+				m_vEye = pPlayer->m_pTransformCom->m_vInfo[Engine::INFO_POS];
+				
+				m_vEye.z -= 10.f;
+				m_vEye.y += 5.f;
+				m_vAt = pPlayer->m_pTransformCom->m_vInfo[Engine::INFO_POS];
+				m_vUp = pPlayer->m_pTransformCom->m_vInfo[Engine::INFO_UP];
 			}
 			else if (!lstrcmpW(Name, L"Intro010"))
 			{
@@ -295,7 +381,7 @@ HRESULT CStage::Ready_LoadObjectFile(void)
 				pMesh->Load_Object(LoadMeshData.MeshPosition);
 				pMesh->m_pTransformCom->m_vAngle = Angle;
 				pMesh->m_pColliderCom->Set_BoxParameter(Parameter.x, Parameter.y, Parameter.z);
-				if (pMesh->m_pColliderCom->m_fBoxHeight <= 60)
+				if (pMesh->m_pColliderCom->m_fBoxHeight <= 50)
 				{
 					pMesh->m_eColliderHeight = Engine::CH_LOW;
 				}
@@ -303,8 +389,16 @@ HRESULT CStage::Ready_LoadObjectFile(void)
 				{
 					pMesh->m_eColliderHeight = Engine::CH_HIGH;
 				}
+				if (pMesh->m_pColliderCom->m_fBoxHeight == 1)
+				{
+					pMesh->m_eColliderHeight = Engine::CH_FRONTJUMP;
+				}
+				if (pMesh->m_pColliderCom->m_fBoxDepth == 1)
+				{
+					pMesh->m_eColliderHeight = Engine::CH_NEXTSTAGE;
+				}
 				FAILED_CHECK_RETURN(pGameLogicLayer->Add_GameObject(L"CollMesh", pMesh), E_FAIL);
-				m_vecColliderMesh.push_back(pMesh);
+				m_vecColliderMesh.emplace(L"CollMesh", pMesh);
 			}
 			else
 			{
@@ -321,6 +415,7 @@ HRESULT CStage::Ready_LoadNaviMeshFile(void)
 	Engine::NAVIMESHSAVESTRUCT LoadNaviData;
 	ZeroMemory(&LoadNaviData, sizeof(Engine::NAVIMESHSAVESTRUCT));
 	FILE *fpNaviMesh;
+	FILE *fpNaviMeshBrick;
 
 	fopen_s(&fpNaviMesh, "../Bin/Resource/ObjectSave/NaviData.NM", "rb");
 	//네비메쉬 카운트
@@ -340,8 +435,23 @@ HRESULT CStage::Ready_LoadNaviMeshFile(void)
 		fread(&LoadNaviData.SaveNaviMeshIndex, sizeof(Engine::_uint), 1, fpNaviMesh);
 		pNaviMesh->SetAddCell(&LoadNaviData.CellPointOne, &LoadNaviData.CellPointTwo, &LoadNaviData.CellPointThree);
 	}
-	pNaviMesh->Set_NaviIndex(0);
 	fclose(fpNaviMesh);
+
+	fopen_s(&fpNaviMeshBrick, "../Bin/Resource/ObjectSave/NaviDataBrick.NM", "rb");
+	fseek(fpNaviMeshBrick, -(_int(sizeof(_uint))), SEEK_END);
+	fread(&NaviRepeatCount, sizeof(_uint), 1, fpNaviMeshBrick);
+	fseek(fpNaviMeshBrick, 0, SEEK_SET);
+
+	for (Engine::_uint repeat = 0; repeat < NaviRepeatCount + 1; repeat++)
+	{
+		fread(&LoadNaviData.CellPointOne, sizeof(Engine::_vec3), 1, fpNaviMesh);
+		fread(&LoadNaviData.CellPointTwo, sizeof(Engine::_vec3), 1, fpNaviMesh);
+		fread(&LoadNaviData.CellPointThree, sizeof(Engine::_vec3), 1, fpNaviMesh);
+		fread(&LoadNaviData.SaveNaviMeshIndex, sizeof(Engine::_uint), 1, fpNaviMesh);
+		pNaviMesh->SetAddCell(&LoadNaviData.CellPointOne, &LoadNaviData.CellPointTwo, &LoadNaviData.CellPointThree);
+	}
+	fclose(fpNaviMeshBrick);
+	pNaviMesh->Set_NaviIndex(0);
 	return S_OK;
 }
 

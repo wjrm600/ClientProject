@@ -14,6 +14,7 @@ Engine::CCollider::CCollider(const CCollider& rhs)
 	, m_fSphereRadius(rhs.m_fSphereRadius)
 	, m_bColliderObject(rhs.m_bColliderObject)
 	, m_pBox(rhs.m_pBox)
+	, m_pSphere(rhs.m_pSphere)
 {
 
 	for (_uint i = 0; i < COL_END; ++i)
@@ -39,7 +40,6 @@ HRESULT Engine::CCollider::Ready_Collider(const _vec3* pVtxPos, const _ulong& dw
 {
 	// 인자로 받아들인 메쉬에 맞는 사이즈의 박스를 생성
 	D3DXComputeBoundingBox(pVtxPos, dwNumVtxCnt, sizeof(_vec3), &m_vMin, &m_vMax);
-	D3DXComputeBoundingSphere(pVtxPos, dwNumVtxCnt, sizeof(_vec3), &m_vSphereCenter, &m_fSphereRadius);
 
 	FAILED_CHECK_RETURN(m_pGraphicDev->CreateVertexBuffer(sizeof(VTXCUBE) * 8,
 		0, // 정적버퍼로 할당하겠다는 옵션
@@ -163,8 +163,11 @@ HRESULT Engine::CCollider::Ready_Collider(const _vec3* pVtxPos, const _ulong& dw
 		m_pTexture[i]->UnlockRect(0);
 	}
 	
+	m_fBoxWidth = m_vMax.x - m_vMin.x;
+	m_fBoxHeight = m_vMax.y - m_vMin.y;
+	m_fBoxDepth = m_vMax.z - m_vMin.z;
 	m_bColliderObject = false;
-	m_fSphereRadius = 30;
+	m_fSphereRadius = 15;
 	D3DXCreateSphere(m_pGraphicDev, m_fSphereRadius, 10, 10, &m_pBox, NULL);
 
 	return S_OK;
@@ -187,7 +190,7 @@ HRESULT CCollider::Ready_Collider()
 	}
 	m_bColliderObject = true;
 	m_fSphereRadius = 30;
-	D3DXCreateSphere(m_pGraphicDev, m_fSphereRadius, 10, 10, &m_pBox, NULL);
+	D3DXCreateSphere(m_pGraphicDev, m_fSphereRadius, 10, 10, &m_pSphere, NULL);
 	return S_OK;
 }
 
@@ -213,20 +216,23 @@ void Engine::CCollider::Render_Collider(COLLTYPE eType, const _matrix* pCollider
 	m_matCollMatrix = *pColliderMatrix;
 
 #ifdef _DEBUG
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, pColliderMatrix);
+	if (false)
+	{
+		m_pGraphicDev->SetTransform(D3DTS_WORLD, pColliderMatrix);
 
-	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	m_pGraphicDev->SetTexture(0, m_pTexture[eType]);
+		m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+		m_pGraphicDev->SetTexture(0, m_pTexture[eType]);
 
-		//m_pGraphicDev->SetStreamSource(0, m_pVB, 0, sizeof(VTXCUBE));
-		//m_pGraphicDev->SetFVF(FVF_CUBE);
-		//m_pGraphicDev->SetIndices(m_pIB);
-		//m_pGraphicDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
+		m_pGraphicDev->SetStreamSource(0, m_pVB, 0, sizeof(VTXCUBE));
+		m_pGraphicDev->SetFVF(FVF_CUBE);
+		m_pGraphicDev->SetIndices(m_pIB);
+		m_pGraphicDev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, 8, 0, 12);
 		//D3DXCreateSphere(m_pGraphicDev, m_fSphereRadius, 10, 10, &m_pSphere, NULL);
 
-	m_pBox->DrawSubset(0);
+		m_pBox->DrawSubset(0);
 
-	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+		m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	}
 #endif
 
 
@@ -248,15 +254,16 @@ CComponent * CCollider::Clone(void)
 
 void Engine::CCollider::Free(void)
 {
-	_uint a;
+
 	for (_uint i = 0; i < COL_END; ++i)
-		a = Safe_Release(m_pTexture[i]);
+		Safe_Release(m_pTexture[i]);
 	if (!m_bColliderObject)
 	{
-		a = Safe_Release(m_pVB);
-		a = Safe_Release(m_pIB);
+		Safe_Release(m_pVB);
+		Safe_Release(m_pIB);
 	}
-	a = Safe_Release(m_pBox);
-	a = Safe_Release(m_pGraphicDev);
+	Safe_Release(m_pBox);
+	Safe_Release(m_pSphere);
+	Safe_Release(m_pGraphicDev);
 }
 

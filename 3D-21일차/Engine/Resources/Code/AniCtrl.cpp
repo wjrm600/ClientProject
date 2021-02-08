@@ -62,7 +62,7 @@ void Engine::CAniCtrl::Set_AnimationSet(const _uint& iIndex)
 	m_pAniCtrl->UnkeyAllTrackEvents(m_iNewTrack);
 
 	// 현재 설정된 트랙을 재생 또는 종료 시키기 위한 함수(3인자 : 언제부터 현재 트랙을 해제할 것인가)
-	m_pAniCtrl->KeyTrackEnable(m_iCurrentTrack, FALSE, m_fAccTime + 0.25);
+	m_pAniCtrl->KeyTrackEnable(m_iCurrentTrack, FALSE, m_fAccTime + 0.02f);
 
 	// 인자값으로 들어오는 트랙에 세팅된 애니메이션 셋을 어떤 속도로 움직일 것인지 설정하는 함수(속도의 상수 값은 1)
 	m_pAniCtrl->KeyTrackSpeed(m_iCurrentTrack, 1.f, m_fAccTime, 0.25, D3DXTRANSITION_LINEAR);
@@ -126,7 +126,7 @@ _bool Engine::CAniCtrl::Is_AnimationSetEnd(void)
 
 	m_pAniCtrl->GetTrackDesc(m_iCurrentTrack, &tTrackInfo);
 
-	if (tTrackInfo.Position >= m_dPeriod - 0.06)
+	if (tTrackInfo.Position >= m_dPeriod - 0.03)
 		return true;
 
 	return false;

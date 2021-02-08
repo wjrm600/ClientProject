@@ -8,7 +8,9 @@
 #include "Terrain.h"
 #include "Player.h"
 #include "DynamicCamera.h"
+#include "StaticCamera.h"
 #include "Monster.h"
+#include "BossStage.h"
 
 #include "Stone.h"
 #include "Intro010.h"
@@ -18,6 +20,7 @@
 #include "Tree.h"
 #include "Effect.h"
 #include "UI.h"
+#include "SoundMgr.h"
 
 BEGIN(Client)
 
@@ -39,13 +42,18 @@ private:
 
 	HRESULT		Ready_LightInfo(void);
 
-	vector<CColliderMesh*> m_vecColliderMesh;
+	multimap<const _tchar*, Engine::CGameObject*> m_vecColliderMesh;
+	_vec3		m_vEye;
+	_vec3		m_vAt;
+	_vec3		m_vUp;
+	_bool		m_bNextStage = false;
 public:
 	HRESULT		Ready_LoadObjectFile(void);
 	HRESULT		Ready_LoadNaviMeshFile(void);
 
 	Engine::CLayer*			pGameLogicLayer;
 	Engine::CLayer*			pEnvironmentLayer;
+	CStaticCamera*		pStaticCamera;
 public:
 	static CStage*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 

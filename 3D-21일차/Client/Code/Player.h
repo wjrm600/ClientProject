@@ -50,19 +50,23 @@ public:
 	Engine::PLAYERHEIGHTCOLLISIONSTATE	m_ePlayerHeightCollisionState = Engine::PHCS_END;
 	Engine::PLAYERWALKDIRECTION			m_ePlayerWalkDirection = Engine::PWD_END;
 	_bool						m_bColliderHigher = false;
+	_bool						m_bColliderFrontJump = false;
+	_bool						m_bOnRuinBox = false;
+	_bool						m_bNextStage = false;
 
-	std::vector<std::vector<char>> m_vColliderName;
-	map<char*, Engine::CCollider*> m_mapCollider;
+	std::vector<std::vector<char>>	m_vColliderName;
+	map<char*, Engine::CCollider*>	m_mapCollider;
 	_uint							m_iColliderCount = 0;
 	_matrix							m_FrameMatrix;
 	_bool							m_bResearchCell = false;
 	_bool							m_bHanging = false;
 	_bool							m_bTurnOn = false;
+	_bool							m_bIntro = false;
 public:
 	static CPlayer*	Create(LPDIRECT3DDEVICE9 pGraphicDev);
 	void			Set_ColliderFrame(char* FrameName);
 	bool			SphereCollision_ToObject(CGameObject* GameObject);
-	bool			BoxCollision_ToObject(CGameObject* GameObject);
+	bool			BoxCollision_ToObject(CGameObject* GameObject, const _tchar* ObjectKinds);
 	bool			CellResearch();
 private:
 	virtual void Free(void) override;

@@ -58,7 +58,7 @@ HRESULT CSkyBox::SetUp_ConstantTable(LPD3DXEFFECT & pEffect)
 	pEffect->SetMatrix("g_matView", &matView);
 	pEffect->SetMatrix("g_matProj", &matProj);
 
-	m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture", 3);
+	m_pTextureCom->Set_Texture(pEffect, "g_BaseTexture", 0);
 
 	return S_OK;
 }

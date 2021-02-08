@@ -30,7 +30,7 @@ private:
 	HRESULT		Add_Component(void);
 	_bool		Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 
-private:
+public:
 
 	Engine::CStaticMesh*		m_pMeshCom = nullptr;
 	Engine::CTransform*			m_pTransformCom = nullptr;

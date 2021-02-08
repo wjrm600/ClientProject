@@ -34,7 +34,7 @@ private:
 	_bool		Collision_ToObject(const _tchar* pLayerTag, const _tchar* pObjTag);
 	HRESULT		SetUp_ConstantTable(LPD3DXEFFECT& pEffect);
 	void		Key_Input(const _float& fTimeDelta);
-private:
+public:
 
 	Engine::CStaticMesh*		m_pMeshCom = nullptr;
 	Engine::CTransform*			m_pTransformCom = nullptr;
@@ -47,9 +47,12 @@ private:
 	_bool						m_bDraw = false;
 	Engine::PICKING_RAY			m_stPickRuinBox;
 	_bool						m_bPickDrag = false;
-	_float						m_fMoveGage = 10;
+	_float						m_fMoveGage = 100;
 	_vec3						m_vOriPosition;
+	_bool						m_bColliderOn = false;
+	Engine::COLLIDERHEIGHT		m_eColliderHeight = Engine::CH_END;
 public:
+	_bool						m_bHeightCollider = false;
 	_tchar						m_sObjectName[30];
 	static CRuinBox*	Create(LPDIRECT3DDEVICE9 pGraphicDev, _tchar* pObjectName);
 

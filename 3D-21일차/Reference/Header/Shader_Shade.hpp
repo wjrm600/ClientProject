@@ -80,7 +80,7 @@ PS_OUT PS_DIRECTIONAL(PS_IN In)
 
 	vector		vLook = normalize(g_vCamPos - vPosition);
 
-	Out.vSpecular = pow(saturate(dot(vLook, vReflect)), g_fPower);
+	//Out.vSpecular = pow(saturate(dot(vLook, vReflect)), g_fPower);
 	
 	return Out;
 }
@@ -117,7 +117,7 @@ PS_OUT PS_POINT(PS_IN In)
 
 	vector		vLook = normalize(g_vCamPos - vPosition);
 
-	Out.vSpecular = pow(saturate(dot(vLook, vReflect)), g_fPower) * fAtt;
+	//Out.vSpecular = pow(saturate(dot(vLook, vReflect)), g_fPower) * fAtt;
 
 	return Out;
 }

@@ -92,11 +92,11 @@ _int Client::CTerrain::Update_Object(const _float& fTimeDelta)
 {
 	Engine::CGameObject::Update_Object(fTimeDelta);
 
-	m_pOptimizationCom->Is_InFrustumForTerrain(m_pBufferCom->Get_VtxPos(), 
-												m_pBufferCom->Get_VtxCntX(),
-												m_pBufferCom->Get_VtxCntZ(), 
-												m_pIndex, 
-												&m_dwTriCnt);
+	//m_pOptimizationCom->Is_InFrustumForTerrain(m_pBufferCom->Get_VtxPos(), 
+	//											m_pBufferCom->Get_VtxCntX(),
+	//											m_pBufferCom->Get_VtxCntZ(), 
+	//											m_pIndex, 
+	//											&m_dwTriCnt);
 
 	m_pRendererCom->Add_RenderGroup(Engine::RENDER_NONALPHA, this);
 

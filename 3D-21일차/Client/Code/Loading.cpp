@@ -54,7 +54,7 @@ HRESULT CLoading::Ready_Loading(LOADINGID eLoading)
 
 _uint CLoading::Loading_ForStage(void)
 {
-	lstrcpy(m_szLoading, L"Buffer Loading.............................");
+	lstrcpy(m_szLoading, L"불러오는 중...");
 	
 	int i = 0;
 
@@ -89,8 +89,6 @@ _uint CLoading::Loading_ForStage(void)
 												Engine::BUFFER_CUBETEX),
 												E_FAIL);
 
-
-	lstrcpy(m_szLoading, L"Texture Loading.............................");
 	// 텍스쳐
 
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Logo", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Logo/Logo.jpg"), E_FAIL);
@@ -122,14 +120,14 @@ _uint CLoading::Loading_ForStage(void)
 		Engine::RESOURCE_STAGE,
 		L"Texture_SkyBox",
 		Engine::TEX_CUBE,
-		L"../Bin/Resource/Texture/SkyBox/burger%d.dds", 4),
+		L"../Bin/Resource/Texture/SkyBox/SkyBoxed.dds"),
 		E_FAIL);
 
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_Effect", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/Explosion/Explosion%d.png", 90), E_FAIL);
 
 	FAILED_CHECK_RETURN(Engine::Ready_Texture(m_pGraphicDev, Engine::RESOURCE_STAGE, L"Texture_UI", Engine::TEX_NORMAL, L"../Bin/Resource/Texture/hpbar.png") , E_FAIL);
 	
-	lstrcpy(m_szLoading, L"Mesh Loading.............................");
+
 	// Stone
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 												Engine::RESOURCE_STAGE,
@@ -145,6 +143,14 @@ _uint CLoading::Loading_ForStage(void)
 												Engine::TYPE_STATIC,
 												L"../Bin/Resource/Mesh/StaticMesh/Intro010/",
 												L"Intro010.X"),
+												E_FAIL);
+
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
+												L"Mesh_BossRoom",
+												Engine::TYPE_STATIC,
+												L"../Bin/Resource/Mesh/StaticMesh/BossRoom/",
+												L"BossRoom.X"),
 												E_FAIL);
 
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
@@ -189,6 +195,14 @@ _uint CLoading::Loading_ForStage(void)
 
 	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
 												Engine::RESOURCE_STAGE,
+												L"Mesh_Boss",
+												Engine::TYPE_DYNAMIC,
+												L"../Bin/Resource/Mesh/DynamicMesh/Boss/",
+												L"Boss.X"),
+												E_FAIL);
+
+	FAILED_CHECK_RETURN(Engine::Ready_Meshes(m_pGraphicDev,
+												Engine::RESOURCE_STAGE,
 												L"Mesh_Sword",
 												Engine::TYPE_STATIC,
 												L"../Bin/Resource/Mesh/StaticMesh/Sword/",
@@ -204,7 +218,7 @@ _uint CLoading::Loading_ForStage(void)
 											E_FAIL);
 	
 	
-	lstrcpy(m_szLoading, L"Loading Complete!!!");
+	lstrcpy(m_szLoading, L"Enter : 시작");
 
 	m_bFinish = true;
 
